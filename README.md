@@ -23,7 +23,7 @@
 * User Interface – UI/UX features including the new right-aligned buttons
 
 
-### 2. ACTS Dashboard: 
+### 3. ACTS Dashboard: 
 #### Key Features
 
 * Course selection and fee management
