@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contractor Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https Coughs://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body { background-color: #f4f6f9; }
+    .card { box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1); }
+    .table td, .table th { vertical-align: middle; }
+    .chart-container { position: relative; height: 300px; width: 100%; margin: 0 auto; }
+    .action-buttons .btn { margin: 0 2px; }
+    .tab-content { padding: 20px 0; }
+    .add-button-container { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+<div class="container mt-4">
+  <h2 class="mb-4">Contractor Dashboard</h2>
+  
+  <!-- Tabs -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="contractor-tab" data-bs-toggle="tab" data-bs-target="#contractor" type="button" role="tab">Contractor Details</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="contract-tab" data-bs-toggle="tab" data-bs-target="#contract" type="button" role="tab">Contracts</button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="myTabContent">
+    <!-- Contractor Tab -->
+    <div class="tab-pane fade show active" id="contractor" role="tabpanel">
+      <div class="add-button-container">
+        <button class="btn btn-danger me-2" onclick="deleteAllContractors()">
+          <i class="bi bi-trash"></i> Delete All Contractors
+        </button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contractorModal">
+          <i class="bi bi-plus-circle"></i> Add New Contractor
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contractorTableBody"></tbody>
+        </table>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="chart-container">
+            <canvas id="contractorChart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="chart-container">
+            <canvas id="contractChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contract Tab -->
+    <div class="tab-pane fade" id="contract" role="tabpanel">
+      <div class="add-button-container">
+        <button class="btn btn-danger me-2" onclick="deleteAllContracts()">
+          <i class="bi bi-trash"></i> Delete All Contracts
+        </button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contractModal">
+          <i class="bi bi-plus-circle"></i> Add New Contract
+        </button>
+      </div>
+      <div class="mb-3">
+        <label for="statusFilter" class="form-label">Filter by Status:</label>
+        <select class="form-select" id="statusFilter" onchange="filterContracts()">
+          <option value="all">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Terminated">Terminated</option>
+        </select>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Contractor</th>
+              <th>Department</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contractTableBody"></tbody>
+        </table>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="chart-container">
+            <canvas id="departmentChart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="chart-container">
+            <canvas id="departmentBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="chart-container" style="height: 400px;">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contractor Modal -->
+<div class="modal fade" id="contractorModal" tabindex="-1" aria-labelledby="contractorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contractorModalLabel">Add/Edit Contractor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="contractorForm" onsubmit="event.preventDefault(); saveContractor();">
+          <input type="hidden" id="contractorId">
+          <div class="mb-3">
+            <label for="contractorName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="contractorName" required>
+          </div>
+          <div class="mb-3">
+            <label for="contractorContact" class="form-label">Contact</label>
+            <input type="tel" class="form-control" id="contractorContact" required>
+          </div>
+          <div class="mb-3">
+            <label for="contractorEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="contractorEmail" required>
+          </div>
+          <div class="mb-3">
+            <label for="contractorAddress" class="form-label">Address</label>
+            <textarea class="form-control" id="contractorAddress" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="contractorForm">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contract Modal -->
+<div class="modal fade" id="contractModal" tabindex="-1" aria-labelledby="contractModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contractModalLabel">Add/Edit Contract</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="contractForm" onsubmit="event.preventDefault(); saveContract();">
+          <input type="hidden" id="contractId">
+          <div class="mb-3">
+            <label for="contractContractor" class="form-label">Contractor</label>
+            <select class="form-control" id="contractContractor" required>
+              <option value="">Select Contractor</option>
+            </select>
+          </div>
+            <div class="mb-3">
+              <label for="contractDepartment" class="form-label">Department</label>
+              <select class="form-select" id="contractDepartment" required>
+                <option value="" disabled selected>Select a department</option>
+                <option value="Housekeeping">Housekeeping</option>
+                <option value="Transport">Transport</option>
+                <option value="Security">Security</option>
+                <option value="Gardening">Gardening</option>
+                <option value="Electrical">Electrical</option>
+                <option value="STP">STP</option>
+                <option value="Canteen">Canteen</option>
+              </select>
+          <div class="mb-3">
+            <label for="contractStartDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="contractStartDate" required>
+          </div>
+          <div class="mb-3">
+            <label for="contractEndDate" class="form-label">End Date</label>
+            <input type="date" class="form-control" id="contractEndDate" required>
+          </div>
+          <div class="mb-3">
+            <label for="contractStatus" class="form-label">Status</label>
+            <select class="form-control" id="contractStatus" required>
+              <option value="Active">Active</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
+              <option value="Terminated">Terminated</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="contractForm">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Data storage
+let contractors = [];
+let contracts = [];
+
+// Initialize charts
+let contractorChart, contractChart, departmentChart, departmentBarChart, timelineChart;
+
+// Color palette for dynamic departments
+const colors = [
+  '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69',
+  '#6610f2', '#e83e8c', '#fd7e14', '#20c9a6', '#d63384', '#6f42c1', '#dc3545'
+];
+
+function initCharts() {
+  try {
+    const contractorCtx = document.getElementById('contractorChart').getContext('2d');
+    contractorChart = new Chart(contractorCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Total Contractors'],
+        datasets: [{
+          data: [contractors.length],
+          backgroundColor: ['#4e73df']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display: true, text: 'Contractor Count' }
+        }
+      }
+    });
+
+    const contractCtx = document.getElementById('contractChart').getContext('2d');
+    contractChart = new Chart(contractCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Total Contracts'],
+        datasets: [{
+          data: [contracts.length],
+          backgroundColor: ['#1cc88a']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display: true, text: 'Contract Count' }
+        }
+      }
+    });
+
+    const departmentCtx = document.getElementById('departmentChart').getContext('2d');
+    departmentChart = new Chart(departmentCtx, {
+      type: 'pie',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          backgroundColor: []
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display: true, text: 'Department Distribution (Pie)' }
+        }
+      }
+    });
+
+    const departmentBarCtx = document.getElementById('departmentBarChart').getContext('2d');
+    departmentBarChart = new Chart(departmentBarCtx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Contracts by Department',
+          data: [],
+          backgroundColor: []
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display: true, text: 'Department Distribution (Bar)' }
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
+    });
+
+    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+    timelineChart = new Chart(timelineCtx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Contracts Over Time',
+          data: [],
+          borderColor: '#4e73df',
+          tension: 0.1,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display: true, text: 'Contract Timeline' }
+        },
+        scales: {
+          x: {
+            type: 'time',
+            time: { unit: 'month', displayFormats: { month: 'MMM YYYY' } },
+            title: { display: true, text: 'Date' }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 },
+            title: { display: true, text: 'Number of Contracts' }
+          }
+        }
+      }
+    });
+  } catch (e) {
+    console.error('Error initializing charts:', e);
+  }
+}
+
+function updateDepartmentCharts() {
+  try {
+    const departments = [...new Set(contracts.map(contract => contract.department.trim()))].filter(dept => dept);
+    const counts = departments.map(dept => 
+      contracts.filter(contract => contract.department.trim() === dept).length
+    );
+    const backgroundColors = departments.map((_, index) => colors[index % colors.length]);
+
+    departmentChart.data.labels = departments.length ? departments : ['No Departments'];
+    departmentChart.data.datasets[0].data = departments.length ? counts : [0];
+    departmentChart.data.datasets[0].backgroundColor = departments.length ? backgroundColors : ['#d3d3d3'];
+    departmentChart.update();
+
+    departmentBarChart.data.labels = departments.length ? departments : ['No Departments'];
+    departmentBarChart.data.datasets[0].data = departments.length ? counts : [0];
+    departmentBarChart.data.datasets[0].backgroundColor = departments.length ? backgroundColors : ['#d3d3d3'];
+    departmentBarChart.update();
+  } catch (e) {
+    console.error('Error updating department charts:', e);
+  }
+}
+
+function updateTimelineChart() {
+  try {
+    const months = new Set();
+    contracts.forEach(contract => {
+      const startDate = new Date(contract.startDate);
+      const month = startDate.toISOString().slice(0, 7);
+      months.add(month);
+    });
+
+    const sortedMonths = Array.from(months).sort();
+    const counts = sortedMonths.map(month => 
+      contracts.filter(contract => contract.startDate.startsWith(month)).length
+    );
+
+    timelineChart.data.labels = sortedMonths;
+    timelineChart.data.datasets[0].data = counts;
+    timelineChart.update();
+  } catch (e) {
+    console.error('Error updating timeline chart:', e);
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem('contractors', JSON.stringify(contractors));
+    localStorage.setItem('contracts', JSON.stringify(contracts));
+    console.log('Data saved to localStorage:', { contractors, contracts });
+    updateCharts();
+    updateDepartmentCharts();
+    updateTimelineChart();
+  } catch (e) {
+    console.error('Error saving to localStorage:', e);
+    alert('Failed to save data to localStorage. Check console for details.');
+  }
+}
+
+function updateCharts() {
+  try {
+    contractorChart.data.datasets[0].data = [contractors.length];
+    contractorChart.update();
+    contractChart.data.datasets[0].data = [contracts.length];
+    contractChart.update();
+  } catch (e) {
+    console.error('Error updating charts:', e);
+  }
+}
+
+function saveContractor() {
+  const form = document.getElementById('contractorForm');
+  if (!form || !form.checkValidity()) {
+    console.warn('Form validation failed or form not found');
+    form?.reportValidity();
+    return;
+  }
+
+  try {
+    const contractor = {
+      id: document.getElementById('contractorId').value || Date.now().toString(),
+      name: document.getElementById('contractorName').value.trim(),
+      contact: document.getElementById('contractorContact').value.trim(),
+      email: document.getElementById('contractorEmail').value.trim(),
+      address: document.getElementById('contractorAddress').value.trim()
+    };
+
+    if (!contractor.name || !contractor.contact || !contractor.email || !contractor.address) {
+      console.warn('Empty fields detected:', contractor);
+      alert('All fields are required and cannot be empty.');
+      return;
+    }
+
+    const index = contractors.findIndex(c => c.id === contractor.id);
+    if (index > -1) {
+      contractors[index] = contractor;
+      console.log('Updated contractor:', contractor);
+    } else {
+      contractors.push(contractor);
+      console.log('Added new contractor:', contractor);
+    }
+
+    saveData();
+    updateContractorTable();
+    updateContractorDropdown();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('contractorModal'));
+    if (modal) {
+      modal.hide();
+    } else {
+      console.warn('Contractor modal instance not found');
+    }
+    form.reset();
+    document.getElementById('contractorId').value = '';
+    console.log('Contractor form reset and modal closed');
+  } catch (e) {
+    console.error('Error in saveContractor:', e);
+    alert('An error occurred while saving the contractor. Check console for details.');
+  }
+}
+
+function editContractor(id) {
+  try {
+    const contractor = contractors.find(c => c.id === id);
+    if (contractor) {
+      document.getElementById('contractorId').value = contractor.id;
+      document.getElementById('contractorName').value = contractor.name;
+      document.getElementById('contractorContact').value = contractor.contact;
+      document.getElementById('contractorEmail').value = contractor.email;
+      document.getElementById('contractorAddress').value = contractor.address;
+      new bootstrap.Modal(document.getElementById('contractorModal')).show();
+      console.log('Editing contractor:', contractor);
+    } else {
+      console.error('Contractor not found:', id);
+    }
+  } catch (e) {
+    console.error('Error in editContractor:', e);
+  }
+}
+
+function deleteContractor(id) {
+  if (confirm('Are you sure you want to delete this contractor?')) {
+    try {
+      const contractorName = contractors.find(c => c.id === id)?.name;
+      contractors = contractors.filter(c => c.id !== id);
+      contracts = contracts.filter(c => c.contractorName !== contractorName);
+      saveData();
+      updateContractorTable();
+      updateContractTable();
+      updateContractorDropdown();
+      console.log('Deleted contractor with id:', id);
+    } catch (e) {
+      console.error('Error in deleteContractor:', e);
+    }
+  }
+}
+
+function updateContractorDropdown() {
+  try {
+    const select = document.getElementById('contractContractor');
+    if (!select) {
+      console.error('Contractor dropdown not found');
+      return;
+    }
+    select.innerHTML = '<option value="">Select Contractor</option>' +
+      contractors.map(contractor => 
+        `<option value="${contractor.name}">${contractor.name}</option>`
+      ).join('');
+    console.log('Updated contractor dropdown with', contractors.length, 'options');
+  } catch (e) {
+    console.error('Error in updateContractorDropdown:', e);
+  }
+}
+
+function saveContract() {
+  const form = document.getElementById('contractForm');
+  if (!form || !form.checkValidity()) {
+    console.warn('Contract form validation failed or form not found');
+    form?.reportValidity();
+    return;
+  }
+
+  try {
+    const contract = {
+      id: document.getElementById('contractId').value || Date.now().toString(),
+      contractorName: document.getElementById('contractContractor').value,
+      department: document.getElementById('contractDepartment').value.trim(),
+      startDate: document.getElementById('contractStartDate').value,
+      endDate: document.getElementById('contractEndDate').value,
+      status: document.getElementById('contractStatus').value
+    };
+
+    if (!contract.department) {
+      console.warn('Empty department detected');
+      alert('Department cannot be empty');
+      return;
+    }
+
+    if (new Date(contract.startDate) > new Date(contract.endDate)) {
+      console.warn('Invalid date range:', contract.startDate, contract.endDate);
+      alert('End date must be after start date');
+      return;
+    }
+
+    const index = contracts.findIndex(c => c.id === contract.id);
+    if (index > -1) {
+      contracts[index] = contract;
+      console.log('Updated contract:', contract);
+    } else {
+      contracts.push(contract);
+      console.log('Added new contract:', contract);
+    }
+
+    saveData();
+    updateContractTable();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('contractModal'));
+    if (modal) {
+      modal.hide();
+    } else {
+      console.warn('Contract modal instance not found');
+    }
+    form.reset();
+    document.getElementById('contractId').value = '';
+    console.log('Contract form reset and modal closed');
+  } catch (e) {
+    console.error('Error in saveContract:', e);
+    alert('An error occurred while saving the contract. Check console for details.');
+  }
+}
+
+function updateContractTable() {
+  try {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const tbody = document.getElementById('contractTableBody');
+    if (!tbody) {
+      console.error('Contract table body not found');
+      return;
+    }
+
+    const filteredContracts = statusFilter === 'all' 
+      ? contracts 
+      : contracts.filter(contract => contract.status === statusFilter);
+
+    tbody.innerHTML = filteredContracts.map(contract => {
+      const contractorExists = contractors.some(c => c.name === contract.contractorName);
+      const contractorNameCell = contractorExists 
+        ? contract.contractorName 
+        : `<span class="text-danger">${contract.contractorName} (Deleted)</span>`;
+
+      return `
+        <tr>
+          <td>${contractorNameCell}</td>
+          <td>${contract.department || 'N/A'}</td>
+          <td>${contract.startDate || 'N/A'}</td>
+          <td>${contract.endDate || 'N/A'}</td>
+          <td><span class="badge ${getStatusBadgeClass(contract.status)}">${contract.status || 'N/A'}</span></td>
+          <td class="action-buttons">
+            <button class="btn btn-sm btn-primary" onclick="editContract('${contract.id}')">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteContract('${contract.id}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+    console.log('Contract table updated with', filteredContracts.length, 'contracts');
+  } catch (e) {
+    console.error('Error in updateContractTable:', e);
+  }
+}
+
+function getStatusBadgeClass(status) {
+  switch(status) {
+    case 'Active': return 'bg-success';
+    case 'Pending': return 'bg-warning';
+    case 'Completed': return 'bg-info';
+    case 'Terminated': return 'bg-danger';
+    default: return 'bg-secondary';
+  }
+}
+
+function editContract(id) {
+  try {
+    const contract = contracts.find(c => c.id === id);
+    if (contract) {
+      document.getElementById('contractId').value = contract.id;
+      document.getElementById('contractContractor').value = contract.contractorName;
+      document.getElementById('contractDepartment').value = contract.department;
+      document.getElementById('contractStartDate').value = contract.startDate;
+      document.getElementById('contractEndDate').value = contract.endDate;
+      document.getElementById('contractStatus').value = contract.status || 'Active';
+      new bootstrap.Modal(document.getElementById('contractModal')).show();
+      console.log('Editing contract:', contract);
+    } else {
+      console.error('Contract not found:', id);
+    }
+  } catch (e) {
+    console.error('Error in editContract:', e);
+  }
+}
+
+function deleteContract(id) {
+  if (confirm('Are you sure you want to delete this contract?')) {
+    try {
+      contracts = contracts.filter(c => c.id !== id);
+      saveData();
+      updateContractTable();
+      console.log('Deleted contract with id:', id);
+    } catch (e) {
+      console.error('Error in deleteContract:', e);
+    }
+  }
+}
+
+function updateContractorTable() {
+  try {
+    const tbody = document.getElementById('contractorTableBody');
+    if (!tbody) {
+      console.error('Contractor table body not found');
+      return;
+    }
+
+    tbody.innerHTML = contractors.map(contractor => `
+      <tr>
+        <td>${contractor.name || 'N/A'}</td>
+        <td>${contractor.contact || 'N/A'}</td>
+        <td>${contractor.email || 'N/A'}</td>
+        <td>${contractor.address || 'N/A'}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-primary" onclick="editContractor('${contractor.id}')">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="deleteContractor('${contractor.id}')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+    console.log('Contractor table updated with', contractors.length, 'contractors');
+  } catch (e) {
+    console.error('Error in updateContractorTable:', e);
+  }
+}
+
+function deleteAllContractors() {
+  if (confirm('Are you sure you want to delete ALL contractors? Associated contracts will be kept but marked as deleted.')) {
+    try {
+      contractors = [];
+      saveData();
+      updateContractorTable();
+      updateContractTable();
+      updateContractorDropdown();
+      console.log('Deleted all contractors');
+    } catch (e) {
+      console.error('Error in deleteAllContractors:', e);
+    }
+  }
+}
+
+function deleteAllContracts() {
+  if (confirm('Are you sure you want to delete ALL contracts?')) {
+    try {
+      contracts = [];
+      saveData();
+      updateContractTable();
+      console.log('Deleted all contracts');
+    } catch (e) {
+      console.error('Error in deleteAllContracts:', e);
+    }
+  }
+}
+
+function filterContracts() {
+  try {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const tbody = document.getElementById('contractTableBody');
+    if (!tbody) {
+      console.error('Contract table body not found');
+      return;
+    }
+
+    const filteredContracts = statusFilter === 'all' 
+      ? contracts 
+      : contracts.filter(contract => contract.status === statusFilter);
+
+    tbody.innerHTML = filteredContracts.map(contract => {
+      const contractorExists = contractors.some(c => c.name === contract.contractorName);
+      const contractorNameCell = contractorExists 
+        ? contract.contractorName 
+        : `<span class="text-danger">${contract.contractorName} (Deleted)</span>`;
+
+      return `
+        <tr>
+          <td>${contractorNameCell}</td>
+          <td>${contract.department || 'N/A'}</td>
+          <td>${contract.startDate || 'N/A'}</td>
+          <td>${contract.endDate || 'N/A'}</td>
+          <td><span class="badge ${getStatusBadgeClass(contract.status)}">${contract.status || 'N/A'}</span></td>
+          <td class="action-buttons">
+            <button class="btn btn-sm btn-primary" onclick="editContract('${contract.id}')">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteContract('${contract.id}')">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+    console.log('Filtered contracts table updated with', filteredContracts.length, 'contracts');
+  } catch (e) {
+    console.error('Error in filterContracts:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    // Initialize data
+    contractors = JSON.parse(localStorage.getItem('contractors')) || [];
+    contracts = JSON.parse(localStorage.getItem('contracts')) || [];
+    console.log('Loaded contractors:', contractors);
+    console.log('Loaded contracts:', contracts);
+
+    // Initialize UI
+    initCharts();
+    updateContractorTable();
+    updateContractTable();
+    updateDepartmentCharts();
+    updateTimelineChart();
+    updateContractorDropdown();
+  } catch (e) {
+    console.error('Error in DOMContentLoaded:', e);
+    alert('Failed to initialize the application. Check console for details.');
+  }
+});
+</script>
+</body>
+</html>
