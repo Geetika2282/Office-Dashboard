@@ -24,3 +24,12 @@
 
 ### 2. ACTS Dashboard: 
 #### Key Features
+
+* Course selection and fee management
+* Batch creation and tracking
+* Unique batch ID and year-wise organization
+* Student enrollment and placement tracking
+* Tabular data display with sortable columns
+* Responsive and modern UI with Bootstrap
+* Form validation for required fields, numbers, and dates
+
