@@ -1,6 +1,5 @@
 # Office-Dashboard
-#### Contract.html:
-# Contractor Dashboard: A web-based dashboard for managing contractors and their contracts.
+### Contractor Dashboard: A web-based dashboard for managing contractors and their contracts.
 
 ## Key Features
 
