@@ -15,12 +15,13 @@
 ### 2. Employee Dashboard: 
 #### Key Features
 
-* Employee Management – Core functionality for managing employee records
-* Group Management – Features related to group transfers and tracking
-* Promotion Tracking – Capabilities for monitoring promotions and level changes
-* Status Visualization – Visual indicators for different employee states
-* Data Validation – Built-in validation features to ensure accurate entries
-* User Interface – Clean and interactive UI/UX features using Bootstrap
+* Employee Management – Core employee record management features
+* Group Management – Group transfer and tracking capabilities
+* Promotion Tracking – Promotion and level change monitoring
+* Salary Management – New salary update and tracking features
+* Data Validation – Built-in validation features
+* User Interface – UI/UX features including the new right-aligned buttons
+
 
 ### 2. ACTS Dashboard: 
 #### Key Features
