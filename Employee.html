@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      max-width: 1400px;
+      padding: 20px;
+    }
+    .tab-content { 
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .modal-body input, .modal-body select { 
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+    }
+    .modal-body input:focus, .modal-body select:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .action-buttons { 
+      display: flex; 
+      gap: 8px; 
+      justify-content: center; 
+    }
+    .error-message { 
+      color: #dc3545; 
+      font-size: 0.85em; 
+      margin-top: -12px; 
+      margin-bottom: 10px; 
+      display: none; 
+    }
+    .form-control.error { 
+      border-color: #dc3545;
+      box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
+    }
+    .table {
+      margin-top: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .table thead th {
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+      padding: 12px;
+      font-weight: 600;
+    }
+    .table tbody td {
+      padding: 12px;
+      vertical-align: middle;
+    }
+    .btn-primary {
+      background-color: #0d6efd;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background-color: #dc3545;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .btn-danger:hover {
+      background-color: #bb2d3b;
+      transform: translateY(-1px);
+    }
+    .nav-tabs {
+      border-bottom: 2px solid #dee2e6;
+      margin-bottom: 0;
+    }
+    .nav-tabs .nav-link {
+      border: none;
+      color: #6c757d;
+      padding: 12px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .nav-tabs .nav-link:hover {
+      border: none;
+      color: #0d6efd;
+    }
+    .nav-tabs .nav-link.active {
+      color: #0d6efd;
+      border: none;
+      border-bottom: 3px solid #0d6efd;
+      background: none;
+    }
+    .form-check {
+      margin: 15px 0;
+    }
+    .form-check-input:checked {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    .modal-content {
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .modal-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+      padding: 15px 20px;
+    }
+    .modal-footer {
+      background-color: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      padding: 15px 20px;
+    }
+    .table-responsive {
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .promoted {
+      color: #198754;
+      font-weight: 500;
+    }
+    .left {
+      color: #dc3545;
+      font-weight: 500;
+    }
+    .active {
+      color: #212529;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-4">
+  <h2 class="text-center">Employee Dashboard</h2>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button">Employee Details</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button">Add Employee</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="group-tab" data-bs-toggle="tab" data-bs-target="#group" type="button">Group Change</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="promotion-tab" data-bs-toggle="tab" data-bs-target="#promotion" type="button">Promotions</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary" type="button">Salary Update</button>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <!-- Employee Details Tab -->
+    <div class="tab-pane fade show active" id="details">
+      <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>ID</th>
+              <th>Join Date</th>
+              <th>Leave Date</th>
+              <th>Designation</th>
+              <th>Group</th>
+              <th>Gender</th>
+              <th>Level</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="detailsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Employee Tab -->
+    <div class="tab-pane fade" id="add">
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" onclick="openModal('add')">Add New</button>
+      </div>
+      <table class="table table-bordered mt-3">
+        <thead><tr><th>Name</th><th>ID</th><th>Join Date</th><th>Designation</th><th>Group</th><th>Gender</th><th>Level</th><th>Actions</th></tr></thead>
+        <tbody id="addTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Group Change Tab -->
+    <div class="tab-pane fade" id="group">
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" onclick="openModal('group')">Add New</button>
+      </div>
+      <table class="table table-bordered mt-3">
+        <thead><tr><th>ID</th><th>From Group</th><th>To Group</th><th>Transfer Date</th><th>Remark</th><th>Level</th><th>Actions</th></tr></thead>
+        <tbody id="groupTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Promotions Tab -->
+    <div class="tab-pane fade" id="promotion">
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" onclick="openModal('promotion')">Add New</button>
+      </div>
+      <table class="table table-bordered mt-3">
+        <thead><tr><th>Name/ID</th><th>Designation</th><th>Effective Date</th><th>Remark</th><th>Level</th><th>Actions</th></tr></thead>
+        <tbody id="promotionTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Salary Update Tab -->
+    <div class="tab-pane fade" id="salary">
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" onclick="openModal('salary')">Add New</button>
+      </div>
+      <table class="table table-bordered mt-3">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Month</th>
+            <th>Previous Salary</th>
+            <th>Update Amount</th>
+            <th>New Salary</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="salaryTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Fill Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form"></form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentTab = '';
+  let employees = [];
+  let groupChanges = [];
+  let promotions = [];
+  let salaryUpdates = [];
+
+  // Function to update all tables
+  function updateAllTables() {
+    updateEmployeeTable();
+    updateGroupTable();
+    updatePromotionTable();
+    updateSalaryTable();
+  }
+
+  function openModal(tab, data = null) {
+    currentTab = tab;
+    const form = document.getElementById('form');
+    form.innerHTML = '';
+
+    if (tab === 'add') {
+      form.innerHTML = `
+        <input class="form-control" id="name" placeholder="Employee Name *" value="${data?.name || ''}" required>
+        <input class="form-control" id="id" placeholder="Employee ID *" value="${data?.id || ''}" required>
+        <input class="form-control" id="joinDate" type="text" placeholder="Date of Joining (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.joinDate || ''}" required>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="stillWorking" ${!data?.leaveDate ? 'checked' : ''} onchange="toggleLeaveDate()">
+          <label class="form-check-label" for="stillWorking">Still Working</label>
+        </div>
+        <input class="form-control" id="leaveDate" type="text" placeholder="Date of Leaving (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.leaveDate || ''}" ${!data?.leaveDate ? 'disabled' : ''}>
+        <select class="form-control" id="designation" required>
+          <option value="">Select Designation *</option>
+          <option ${data?.designation === 'Manager' ? 'selected' : ''}>Manager</option>
+          <option ${data?.designation === 'Staff' ? 'selected' : ''}>Staff</option>
+        </select>
+        <select class="form-control" id="group" required>
+          <option value="">Select Group *</option>
+          <option ${data?.group === 'Group A' ? 'selected' : ''}>Group A</option>
+          <option ${data?.group === 'Group B' ? 'selected' : ''}>Group B</option>
+        </select>
+        <select class="form-control" id="gender" required>
+          <option value="">Select Gender *</option>
+          <option ${data?.gender === 'M' ? 'selected' : ''}>M</option>
+          <option ${data?.gender === 'F' ? 'selected' : ''}>F</option>
+          <option ${data?.gender === 'T' ? 'selected' : ''}>T</option>
+        </select>
+        <input class="form-control" id="level" placeholder="Level *" value="${data?.level || ''}" required>
+      `;
+    } else if (tab === 'group') {
+      // Create select for existing active employees only
+      const activeEmployees = employees.filter(emp => {
+        if (!emp.leaveDate) return true;
+        return new Date(emp.leaveDate) > new Date();
+      });
+
+      const employeeOptions = activeEmployees.map(emp => 
+        `<option value="${emp.id}" ${data?.id === emp.id ? 'selected' : ''}>${emp.name} (${emp.id})</option>`
+      ).join('');
+
+      form.innerHTML = `
+        <select class="form-control" id="id" required>
+          <option value="">Select Employee *</option>
+          ${employeeOptions}
+        </select>
+        <select class="form-control" id="fromGroup" required>
+          <option value="">From Group *</option>
+          <option ${data?.fromGroup === 'Group A' ? 'selected' : ''}>Group A</option>
+          <option ${data?.fromGroup === 'Group B' ? 'selected' : ''}>Group B</option>
+        </select>
+        <select class="form-control" id="toGroup" required>
+          <option value="">To Group *</option>
+          <option ${data?.toGroup === 'Group A' ? 'selected' : ''}>Group A</option>
+          <option ${data?.toGroup === 'Group B' ? 'selected' : ''}>Group B</option>
+        </select>
+        <input class="form-control" id="transferDate" type="text" placeholder="Transfer Date (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.transferDate || ''}" required>
+        <input class="form-control" id="remark" placeholder="Remark (Optional)" value="${data?.remark || ''}">
+        <input class="form-control" id="level" placeholder="Level *" value="${data?.level || ''}" required>
+      `;
+    } else if (tab === 'promotion') {
+      // Create select for existing active employees only
+      const activeEmployees = employees.filter(emp => {
+        if (!emp.leaveDate) return true;
+        return new Date(emp.leaveDate) > new Date();
+      });
+
+      const employeeOptions = activeEmployees.map(emp => 
+        `<option value="${emp.id}" ${data?.nameId === emp.id ? 'selected' : ''}>${emp.name} (${emp.id})</option>`
+      ).join('');
+
+      form.innerHTML = `
+        <select class="form-control" id="nameId" required>
+          <option value="">Select Employee *</option>
+          ${employeeOptions}
+        </select>
+        <select class="form-control" id="designation" required>
+          <option value="">Select Designation *</option>
+          <option ${data?.designation === 'Manager' ? 'selected' : ''}>Manager</option>
+          <option ${data?.designation === 'Staff' ? 'selected' : ''}>Staff</option>
+        </select>
+        <input class="form-control" id="effectiveDate" type="text" placeholder="Effective Date (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.effectiveDate || ''}" required>
+        <input class="form-control" id="remark" placeholder="Remark (Optional)" value="${data?.remark || ''}">
+        <input class="form-control" id="level" placeholder="Level *" value="${data?.level || ''}" required>
+      `;
+    } else if (tab === 'salary') {
+      // Create select for existing active employees only
+      const activeEmployees = employees.filter(emp => {
+        if (!emp.leaveDate) return true;
+        return new Date(emp.leaveDate) > new Date();
+      });
+
+      const employeeOptions = activeEmployees.map(emp => 
+        `<option value="${emp.id}" ${data?.employeeId === emp.id ? 'selected' : ''}>${emp.name} (${emp.id})</option>`
+      ).join('');
+
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      const monthOptions = months.map(month => 
+        `<option value="${month}" ${data?.month === month ? 'selected' : ''}>${month}</option>`
+      ).join('');
+
+      form.innerHTML = `
+        <select class="form-control" id="employeeId" required>
+          <option value="">Select Employee *</option>
+          ${employeeOptions}
+        </select>
+        <select class="form-control" id="month" required>
+          <option value="">Select Month *</option>
+          ${monthOptions}
+        </select>
+        <input class="form-control" id="year" type="number" placeholder="Year *" min="2000" max="2100" value="${data?.year || new Date().getFullYear()}" required>
+        <input class="form-control" id="previousSalary" type="number" placeholder="Previous Salary *" min="0" step="0.01" value="${data?.previousSalary || ''}" required>
+        <input class="form-control" id="updateAmount" type="number" placeholder="Salary Update Amount *" min="0" step="0.01" value="${data?.updateAmount || ''}" required>
+      `;
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('formModal'));
+    modal.show();
+  }
+
+  function toggleLeaveDate() {
+    const stillWorkingCheckbox = document.getElementById('stillWorking');
+    const leaveDateInput = document.getElementById('leaveDate');
+    
+    if (stillWorkingCheckbox.checked) {
+      leaveDateInput.value = '';
+      leaveDateInput.disabled = true;
+    } else {
+      leaveDateInput.disabled = false;
+    }
+  }
+
+  function submitForm() {
+    const form = document.getElementById('form');
+    const inputs = form.querySelectorAll('input[required], select[required]');
+    let isValid = true;
+    
+    // Remove any existing error messages and error classes
+    form.querySelectorAll('.error-message').forEach(el => el.remove());
+    inputs.forEach(input => input.classList.remove('error'));
+
+    // Validate each required input
+    inputs.forEach(input => {
+      // Skip validation for leave date if still working is checked
+      if (currentTab === 'add' && input.id === 'leaveDate' && document.getElementById('stillWorking').checked) {
+        return;
+      }
+
+      if (!input.value.trim() && !input.disabled) {
+        isValid = false;
+        input.classList.add('error');
+        
+        // Create and insert error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = `Please fill in ${input.placeholder || 'this field'}`;
+        input.parentNode.insertBefore(errorDiv, input.nextSibling);
+        errorDiv.style.display = 'block';
+      }
+    });
+
+    if (!isValid) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const formData = {};
+    form.querySelectorAll('input, select').forEach(input => {
+      // Don't include leave date in formData if still working is checked
+      if (currentTab === 'add' && input.id === 'leaveDate' && document.getElementById('stillWorking').checked) {
+        formData[input.id] = '';
+      } else {
+        formData[input.id] = input.value;
+      }
+    });
+
+    if (currentTab === 'add') {
+      if (formData.id) {
+        const index = employees.findIndex(emp => emp.id === formData.id);
+        if (index !== -1) {
+          // Check if there's a level change
+          const oldLevel = parseInt(employees[index].level) || 0;
+          const newLevel = parseInt(formData.level) || 0;
+          if (newLevel > oldLevel) {
+            // Add a promotion record for the level change
+            promotions.push({
+              nameId: formData.id,
+              designation: formData.designation,
+              effectiveDate: new Date().toISOString().split('T')[0],
+              remark: 'Level increase',
+              level: formData.level
+            });
+          }
+          employees[index] = formData;
+        } else {
+          employees.push(formData);
+        }
+      }
+    } else if (currentTab === 'group') {
+      if (formData.id) {
+        const index = groupChanges.findIndex(gc => gc.id === formData.id);
+        if (index !== -1) {
+          groupChanges[index] = formData;
+        } else {
+          groupChanges.push(formData);
+        }
+        // Update employee's group if it exists
+        const employeeIndex = employees.findIndex(emp => emp.id === formData.id);
+        if (employeeIndex !== -1) {
+          employees[employeeIndex].group = formData.toGroup;
+        }
+      }
+    } else if (currentTab === 'promotion') {
+      if (formData.nameId) {
+        const index = promotions.findIndex(p => p.nameId === formData.nameId);
+        if (index !== -1) {
+          promotions[index] = formData;
+        } else {
+          promotions.push(formData);
+        }
+        // Update employee's designation and level if it exists
+        const employeeIndex = employees.findIndex(emp => emp.id === formData.nameId);
+        if (employeeIndex !== -1) {
+          employees[employeeIndex].designation = formData.designation;
+          employees[employeeIndex].level = formData.level;
+        }
+      }
+    } else if (currentTab === 'salary') {
+      if (formData.employeeId) {
+        const index = salaryUpdates.findIndex(s => 
+          s.employeeId === formData.employeeId && 
+          s.month === formData.month && 
+          s.year === formData.year
+        );
+        
+        if (index !== -1) {
+          salaryUpdates[index] = formData;
+        } else {
+          salaryUpdates.push(formData);
+        }
+      }
+    }
+
+    // Update all tables after any change
+    updateAllTables();
+    bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
+  }
+
+  function updateEmployeeTable() {
+    const tbody = document.getElementById('addTable');
+    const detailsTbody = document.getElementById('detailsTable');
+    
+    // Table content for Add Employee tab (without Leave Date)
+    const addTableContent = employees.map(emp => `
+      <tr>
+        <td>${emp.name || ''}</td>
+        <td>${emp.id || ''}</td>
+        <td>${emp.joinDate || ''}</td>
+        <td>${emp.designation || ''}</td>
+        <td>${emp.group || ''}</td>
+        <td>${emp.gender || ''}</td>
+        <td>${emp.level || ''}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn btn-sm btn-primary" onclick='editEmployee(${JSON.stringify(emp)})' title="Edit">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.id}')" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    // Table content for Employee Details tab (with Leave Date, promotion status, and employment status)
+    const detailsTableContent = employees.map(emp => {
+      // Find the latest promotion for this employee
+      const latestPromotion = promotions
+        .filter(p => p.nameId === emp.id)
+        .sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate))[0];
+
+      // Check what was changed in the promotion
+      const hasDesignationChange = latestPromotion && latestPromotion.designation !== emp.designation;
+      const hasLevelChange = latestPromotion && parseInt(latestPromotion.level) === parseInt(emp.level);
+      
+      // Apply styles based on what changed
+      const nameStyle = (hasDesignationChange || hasLevelChange) ? 'color: green;' : '';
+      const designationStyle = hasDesignationChange ? 'color: green;' : '';
+      const levelStyle = hasLevelChange ? 'color: green;' : '';
+      const promotionText = (hasDesignationChange || hasLevelChange) ? ' (Promoted)' : '';
+      
+      // Check employment status
+      const hasLeft = emp.leaveDate && new Date(emp.leaveDate) <= new Date();
+      const statusStyle = hasLeft ? 'color: red;' : '';
+      const statusText = hasLeft ? ' (Left)' : ' (Active)';
+      const leaveDateDisplay = emp.leaveDate ? emp.leaveDate : 'Still Working';
+      
+      return `
+        <tr>
+          <td style="${nameStyle}">${emp.name || ''}${promotionText}</td>
+          <td>${emp.id || ''}</td>
+          <td>${emp.joinDate || ''}</td>
+          <td style="${statusStyle}">${leaveDateDisplay}${statusText}</td>
+          <td style="${designationStyle}">${emp.designation || ''}</td>
+          <td>${emp.group || ''}</td>
+          <td>${emp.gender || ''}</td>
+          <td style="${levelStyle}">${emp.level || ''}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-primary" onclick='editEmployee(${JSON.stringify(emp)})' title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.id}')" title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.innerHTML = addTableContent;
+    detailsTbody.innerHTML = detailsTableContent;
+    console.log('Employee tables updated with', employees.length, 'employees');
+  }
+
+  function updateGroupTable() {
+    const tbody = document.getElementById('groupTable');
+    // Filter out group changes for employees who have left
+    const activeGroupChanges = groupChanges.filter(gc => {
+      const employee = employees.find(emp => emp.id === gc.id);
+      if (!employee) return false;
+      if (!employee.leaveDate) return true;
+      return new Date(employee.leaveDate) > new Date();
+    });
+
+    tbody.innerHTML = activeGroupChanges.map(gc => `
+      <tr>
+        <td>${gc.id || ''}</td>
+        <td>${gc.fromGroup || ''}</td>
+        <td>${gc.toGroup || ''}</td>
+        <td>${gc.transferDate || ''}</td>
+        <td>${gc.remark || ''}</td>
+        <td>${gc.level || ''}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn btn-sm btn-primary" onclick='editGroupChange(${JSON.stringify(gc)})' title="Edit">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteGroupChange('${gc.id}')" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function updatePromotionTable() {
+    const tbody = document.getElementById('promotionTable');
+    // Filter out promotions for employees who have left
+    const activePromotions = promotions.filter(p => {
+      const employee = employees.find(emp => emp.id === p.nameId);
+      if (!employee) return false;
+      if (!employee.leaveDate) return true;
+      return new Date(employee.leaveDate) > new Date();
+    });
+
+    tbody.innerHTML = activePromotions.map(p => `
+      <tr>
+        <td>${p.nameId || ''}</td>
+        <td>${p.designation || ''}</td>
+        <td>${p.effectiveDate || ''}</td>
+        <td>${p.remark || ''}</td>
+        <td>${p.level || ''}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn btn-sm btn-primary" onclick='editPromotion(${JSON.stringify(p)})' title="Edit">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deletePromotion('${p.nameId}')" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function updateSalaryTable() {
+    const tbody = document.getElementById('salaryTable');
+    tbody.innerHTML = salaryUpdates.map(update => {
+      const employee = employees.find(emp => emp.id === update.employeeId);
+      const newSalary = parseFloat(update.previousSalary) + parseFloat(update.updateAmount);
+      
+      return `
+        <tr>
+          <td>${update.employeeId || ''}</td>
+          <td>${employee ? employee.name : ''}</td>
+          <td>${update.year || ''}</td>
+          <td>${update.month || ''}</td>
+          <td>₹${parseFloat(update.previousSalary).toLocaleString('en-IN')}</td>
+          <td>₹${parseFloat(update.updateAmount).toLocaleString('en-IN')}</td>
+          <td>₹${newSalary.toLocaleString('en-IN')}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-primary" onclick='editSalaryUpdate(${JSON.stringify(update)})' title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteSalaryUpdate('${update.employeeId}', '${update.month}', '${update.year}')" title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function deleteEmployee(id) {
+    if (confirm('Are you sure you want to delete this employee?')) {
+      employees = employees.filter(emp => emp.id !== id);
+      // Also remove related group changes and promotions
+      groupChanges = groupChanges.filter(gc => gc.id !== id);
+      promotions = promotions.filter(p => p.nameId !== id);
+      updateAllTables();
+    }
+  }
+
+  function deleteGroupChange(id) {
+    if (confirm('Are you sure you want to delete this group change record?')) {
+      groupChanges = groupChanges.filter(gc => gc.id !== id);
+      updateAllTables();
+    }
+  }
+
+  function deletePromotion(nameId) {
+    if (confirm('Are you sure you want to delete this promotion record?')) {
+      promotions = promotions.filter(p => p.nameId !== nameId);
+      updateAllTables();
+    }
+  }
+
+  function deleteSalaryUpdate(employeeId, month, year) {
+    if (confirm('Are you sure you want to delete this salary update record?')) {
+      salaryUpdates = salaryUpdates.filter(s => 
+        !(s.employeeId === employeeId && s.month === month && s.year === year)
+      );
+      updateAllTables();
+    }
+  }
+
+  function editEmployee(data) {
+    currentTab = 'add';
+    openModal('add', data);
+  }
+
+  function editGroupChange(data) {
+    currentTab = 'group';
+    openModal('group', data);
+  }
+
+  function editPromotion(data) {
+    currentTab = 'promotion';
+    openModal('promotion', data);
+  }
+
+  function editSalaryUpdate(data) {
+    currentTab = 'salary';
+    openModal('salary', data);
+  }
+
+  // Initialize tables
+  document.addEventListener('DOMContentLoaded', function() {
+    updateAllTables();
+  });
+</script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
