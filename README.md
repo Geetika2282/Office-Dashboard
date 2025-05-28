@@ -1,7 +1,6 @@
 # Office-Dashboard
-### Contractor Dashboard: A web-based dashboard for managing contractors and their contracts.
-
-## Key Features
+### Contractor Dashboard: 
+#### Key Features
 
 • Add, edit, and delete contractors with contact details
 • Create and manage contracts for different departments
