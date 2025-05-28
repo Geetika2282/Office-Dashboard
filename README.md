@@ -34,3 +34,13 @@
 * Responsive and modern UI with Bootstrap
 * Form validation for required fields, numbers, and dates
 
+### 4. Vehicles Dashboard: 
+#### Key Features
+* Dashboard Overview: Displays key metrics like total vehicles, active services, valid insurances, and due services with interactive charts for service and insurance status.
+* Vehicle Management: Register vehicles with company, model, and registration details; manage service and insurance records via intuitive forms.
+- Service Records: Track service history with dates, descriptions, and statuses (Up to Date, Due Soon, Overdue); add/edit records easily.
+- Insurance Records: Monitor insurance details including provider, policy number, and validity status (Valid, Expiring Soon, Expired); update as needed.
+- Responsive Design: Adapts seamlessly to different screen sizes with a modern, gradient-based UI and smooth animations.
+- Interactive Modals: View detailed vehicle info, service, and insurance history in modals with options to edit or add new records.
+- **Recent Activities**: Logs latest actions (e.g., registrations, services) in a table for quick reference.
+
