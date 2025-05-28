@@ -11,7 +11,7 @@
   <div class="container mt-5">
     <div class="card shadow rounded-4 p-4">
       <h3 class="mb-4 text-primary">ACTS Module</h3>
-      <form>
+      <form id="actsForm">
         <div class="row g-3">
           <div class="col-md-6">
             <label for="courseName" class="form-label">Course Name</label>
@@ -26,12 +26,12 @@
 
           <div class="col-md-6">
             <label for="batchName" class="form-label">Batch Name</label>
-            <input type="text" class="form-control" id="batchName" placeholder="Enter batch name" required />
+            <input type="text" class="form-control" id="batchName" required />
           </div>
 
           <div class="col-md-6">
             <label for="batchId" class="form-label">Batch ID</label>
-            <input type="text" class="form-control" id="batchId" placeholder="Enter batch ID" required />
+            <input type="text" class="form-control" id="batchId" required />
           </div>
 
           <div class="col-md-6">
@@ -55,7 +55,7 @@
           </div>
 
           <div class="col-12 text-end">
-            <button type="submit" class="btn btn-primary px-4">Submit</button>
+            <button type="submit" class="btn btn-success px-4">Add to Table</button>
           </div>
         </div>
       </form>
@@ -64,7 +64,7 @@
     <div class="card shadow rounded-4 mt-5 p-4">
       <h4 class="mb-3 text-secondary">Batch Data</h4>
       <div class="table-responsive">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered" id="dataTable">
           <thead class="table-light">
             <tr>
               <th>Course Name</th>
@@ -74,61 +74,55 @@
               <th>Enrolled</th>
               <th>Placed</th>
               <th>Fee</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <!-- Data rows go here dynamically -->
-            <tr>
-              <td>AI & ML</td>
-              <td>Batch A</td>
-              <td>AI2025A</td>
-              <td>2025-01-01</td>
-              <td>50</td>
-              <td>45</td>
-              <td>50000</td>
-            </tr>
-            <tr>
-              <td>Data Science</td>
-              <td>Batch B</td>
-              <td>DS2024B</td>
-              <td>2024-07-15</td>
-              <td>60</td>
-              <td>55</td>
-              <td>48000</td>
-            </tr>
-            <tr>
-              <td>Cyber Security</td>
-              <td>Batch C</td>
-              <td>CS2023C</td>
-              <td>2023-08-10</td>
-              <td>40</td>
-              <td>35</td>
-              <td>46000</td>
-            </tr>
-            <tr>
-              <td>Cloud Computing</td>
-              <td>Batch D</td>
-              <td>CC2022D</td>
-              <td>2022-05-20</td>
-              <td>45</td>
-              <td>42</td>
-              <td>47000</td>
-            </tr>
-            <tr>
-              <td>AI & ML</td>
-              <td>Batch E</td>
-              <td>AI2023E</td>
-              <td>2023-09-01</td>
-              <td>55</td>
-              <td>50</td>
-              <td>51000</td>
-            </tr>
-            <!-- You can add JS later to handle form data dynamically -->
+            <!-- Table rows will be added dynamically -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
+
+  <script>
+    document.getElementById("actsForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const course = document.getElementById("courseName").value;
+      const batchName = document.getElementById("batchName").value;
+      const batchId = document.getElementById("batchId").value;
+      const year = document.getElementById("year").value;
+      const enrolled = document.getElementById("enrolled").value;
+      const placed = document.getElementById("placed").value;
+      const fee = document.getElementById("fee").value;
+
+      const table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow();
+
+      newRow.innerHTML = `
+        <td>${course}</td>
+        <td>${batchName}</td>
+        <td>${batchId}</td>
+        <td>${year}</td>
+        <td>${enrolled}</td>
+        <td>${placed}</td>
+        <td>${fee}</td>
+        <td><button class="btn btn-danger btn-sm deleteBtn">Delete</button></td>
+      `;
+
+      // Clear form after adding
+      document.getElementById("actsForm").reset();
+    });
+
+    // Delegate delete functionality to table
+    document.getElementById("dataTable").addEventListener("click", function (e) {
+      if (e.target && e.target.classList.contains("deleteBtn")) {
+        const row = e.target.closest("tr");
+        row.remove();
+      }
+    });
+  </script>
 
 </body>
 </html>
