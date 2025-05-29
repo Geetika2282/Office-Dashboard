@@ -44,3 +44,14 @@
 - Interactive Modals: View detailed vehicle info, service, and insurance history in modals with options to edit or add new records.
 - **Recent Activities**: Logs latest actions (e.g., registrations, services) in a table for quick reference.
 
+### 5. Staff Dashboard: 
+#### Key Features
+- Bootstrap-based responsive dashboard
+- Staff: Add, edit, delete records (name, joining date, department)
+- Salary: Add, edit, delete records (staff, year, month, amount)
+- Responsive tables with edit/delete actions
+- In-memory data storage (database replaceable)
+- Modern UI with cards, shadows, and icons
+- Form validation for required fields
+- Real-time table and dropdown updates
+
