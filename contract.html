@@ -1,29 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contractor Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https Coughs://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <style>
-    body { background-color: #f4f6f9; }
-    .card { box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1); }
-    .table td, .table th { vertical-align: middle; }
-    .chart-container { position: relative; height: 300px; width: 100%; margin: 0 auto; }
-    .action-buttons .btn { margin: 0 2px; }
-    .tab-content { padding: 20px 0; }
-    .add-button-container { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    body {
+      background-color: #f9fafb;
+      font-family: 'Inter', sans-serif;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 1400px;
+      padding: 20px;
+      margin: 0 auto;
+    }
+    .dashboard-header {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .dashboard-header h2 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    .nav-tabs {
+      border: none;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+    .nav-tabs .nav-link {
+      border: none;
+      color: #6b7280;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .nav-tabs .nav-link:hover {
+      color: #2563eb;
+      background: #f3f4f6;
+      transform: scale(1.05);
+    }
+    .nav-tabs .nav-link.active {
+      color: #2563eb;
+      background: #e0f2fe;
+      border: none;
+    }
+    .nav-tabs .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 3px;
+      background: #2563eb;
+      border-radius: 2px;
+    }
+    .tab-content {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-top: 20px;
+    }
+    .add-button-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .table {
+      margin-top: 20px;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table thead th {
+      background: #f3f4f6;
+      color: #374151;
+      font-weight: 600;
+      padding: 16px;
+      border: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .table tbody tr {
+      background: #ffffff;
+      transition: background 0.2s ease;
+    }
+    .table tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+    .table tbody tr:hover {
+      background: #e0f2fe;
+    }
+    .table tbody td {
+      padding: 16px;
+      vertical-align: middle;
+      border: none;
+      font-size: 0.95rem;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 1rem;
+    }
+    .action-btn.edit {
+      background: #2563eb;
+      color: white;
+    }
+    .action-btn.delete {
+      background: #ef4444;
+      color: white;
+    }
+    .action-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .chart-container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      height: 350px;
+    }
+    .modal-content {
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      background: #ffffff;
+      border: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-header {
+      background: #f9fafb;
+      border-bottom: none;
+      padding: 20px 24px;
+      border-radius: 12px 12px 0 0;
+    }
+    .modal-title {
+      font-weight: 700;
+      color: #1f2937;
+      font-size: 1.25rem;
+    }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-footer {
+      background: #f9fafb;
+      border-top: none;
+      padding: 16px 24px;
+      border-radius: 0 0 12px 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      color: #6b7280;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      pointer-events: none;
+      background: #ffffff;
+      padding: 0 4px;
+    }
+    .form-group input:focus + label,
+    .form-group input:not(:placeholder-shown) + label,
+    .form-group select:focus + label,
+    .form-group select:not([value=""]) + label,
+    .form-group textarea:focus + label,
+    .form-group textarea:not(:placeholder-shown) + label {
+      top: -8px;
+      left: 8px;
+      font-size: 0.75rem;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    .form-control, .form-select {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      height: 48px;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      outline: none;
+    }
+    .form-control.error, .form-select.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      display: none;
+    }
+    .name-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .name-group .form-select {
+      width: 120px;
+    }
+    .name-group .form-control {
+      flex: 1;
+    }
+    .form-check {
+      margin: 12px 0;
+    }
+    .form-check-input:checked {
+      background-color: #2563eb;
+      border-color: #2563eb;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .btn-secondary {
+      background: #6b7280;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      background: #4b5563;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .btn-danger {
+      background: #ef4444;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .btn-danger:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 576px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-tabs {
+        flex-wrap: wrap;
+      }
+      .nav-tabs .nav-link {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+      .dashboard-header h2 {
+        font-size: 1.5rem;
+      }
+      .name-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .name-group .form-select {
+        width: 100%;
+      }
+      .chart-container {
+        height: 300px;
+      }
+    }
   </style>
 </head>
 <body>
 <div class="container mt-4">
-  <h2 class="mb-4">Contractor Dashboard</h2>
-  
-  <!-- Tabs -->
+  <div class="dashboard-header">
+    <h2>Contractor Dashboard</h2>
+  </div>
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="contractor-tab" data-bs-toggle="tab" data-bs-target="#contractor" type="button" role="tab">Contractor Details</button>
@@ -32,8 +349,6 @@
       <button class="nav-link" id="contract-tab" data-bs-toggle="tab" data-bs-target="#contract" type="button" role="tab">Contracts</button>
     </li>
   </ul>
-
-  <!-- Tab Content -->
   <div class="tab-content" id="myTabContent">
     <!-- Contractor Tab -->
     <div class="tab-pane fade show active" id="contractor" role="tabpanel">
@@ -46,13 +361,14 @@
         </button>
       </div>
       <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table">
           <thead>
             <tr>
               <th>Name</th>
               <th>Contact</th>
               <th>Email</th>
               <th>Address</th>
+              <th>Area</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -72,7 +388,6 @@
         </div>
       </div>
     </div>
-
     <!-- Contract Tab -->
     <div class="tab-pane fade" id="contract" role="tabpanel">
       <div class="add-button-container">
@@ -83,25 +398,15 @@
           <i class="bi bi-plus-circle"></i> Add New Contract
         </button>
       </div>
-      <div class="mb-3">
-        <label for="statusFilter" class="form-label">Filter by Status:</label>
-        <select class="form-select" id="statusFilter" onchange="filterContracts()">
-          <option value="all">All Statuses</option>
-          <option value="Active">Active</option>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-          <option value="Terminated">Terminated</option>
-        </select>
-      </div>
       <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table">
           <thead>
             <tr>
               <th>Contractor</th>
               <th>Department</th>
               <th>Start Date</th>
               <th>End Date</th>
-              <th>Status</th>
+              <th>Remarks</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -130,10 +435,9 @@
     </div>
   </div>
 </div>
-
 <!-- Contractor Modal -->
 <div class="modal fade" id="contractorModal" tabindex="-1" aria-labelledby="contractorModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="contractorModalLabel">Add/Edit Contractor</h5>
@@ -142,21 +446,45 @@
       <div class="modal-body">
         <form id="contractorForm" onsubmit="event.preventDefault(); saveContractor();">
           <input type="hidden" id="contractorId">
-          <div class="mb-3">
-            <label for="contractorName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="contractorName" required>
-          </div>
-          <div class="mb-3">
-            <label for="contractorContact" class="form-label">Contact</label>
-            <input type="tel" class="form-control" id="contractorContact" required>
-          </div>
-          <div class="mb-3">
-            <label for="contractorEmail" class="form-label">Email</label>
-            <input type="email" class="form-control" id="contractorEmail" required>
-          </div>
-          <div class="mb-3">
-            <label for="contractorAddress" class="form-label">Address</label>
-            <textarea class="form-control" id="contractorAddress" required></textarea>
+          <div class="form-grid">
+            <div class="form-group">
+              <div class="name-group">
+                <select class="form-select" id="contractorTitle">
+                  <option value="">None</option>
+                  <option value="Mr.">Mr.</option>
+                  <option value="Ms.">Ms.</option>
+                  <option value="Mrs.">Mrs.</option>
+                  <option value="Dr.">Dr.</option>
+                  <option value="Prof.">Prof.</option>
+                </select>
+                <label for="contractorTitle">Title</label>
+                <input type="text" class="form-control" id="contractorName" placeholder=" " required>
+                <label for="contractorName">Name *</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <input type="tel" class="form-control" id="contractorContact" placeholder=" " required>
+              <label for="contractorContact">Contact *</label>
+            </div>
+            <div class="form-group">
+              <input type="email" class="form-control" id="contractorEmail" placeholder=" ">
+              <label for="contractorEmail">Email</label>
+            </div>
+            <div class="form-group">
+              <textarea class="form-control" id="contractorAddress" placeholder=" " required style="height: 100px;"></textarea>
+              <label for="contractorAddress">Address *</label>
+            </div>
+            <div class="form-group">
+              <label>Area *</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="contractorArea" id="areaEC" value="EC" required>
+                <label class="form-check-label" for="areaEC">EC</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="contractorArea" id="areaKP" value="KP">
+                <label class="form-check-label" for="areaKP">KP</label>
+              </div>
+            </div>
           </div>
         </form>
       </div>
@@ -167,10 +495,9 @@
     </div>
   </div>
 </div>
-
 <!-- Contract Modal -->
 <div class="modal fade" id="contractModal" tabindex="-1" aria-labelledby="contractModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="contractModalLabel">Add/Edit Contract</h5>
@@ -179,40 +506,38 @@
       <div class="modal-body">
         <form id="contractForm" onsubmit="event.preventDefault(); saveContract();">
           <input type="hidden" id="contractId">
-          <div class="mb-3">
-            <label for="contractContractor" class="form-label">Contractor</label>
-            <select class="form-control" id="contractContractor" required>
-              <option value="">Select Contractor</option>
-            </select>
-          </div>
-            <div class="mb-3">
-              <label for="contractDepartment" class="form-label">Department</label>
+          <div class="form-grid">
+            <div class="form-group">
               <select class="form-select" id="contractDepartment" required>
-                <option value="" disabled selected>Select a department</option>
+                <option value="" disabled selected>Select a Department</option>
                 <option value="Housekeeping">Housekeeping</option>
                 <option value="Transport">Transport</option>
                 <option value="Security">Security</option>
                 <option value="Gardening">Gardening</option>
                 <option value="Electrical">Electrical</option>
-                <option value="STP">STP</option>
+                <option value="STP">Operator</option>
                 <option value="Canteen">Canteen</option>
               </select>
-          <div class="mb-3">
-            <label for="contractStartDate" class="form-label">Start Date</label>
-            <input type="date" class="form-control" id="contractStartDate" required>
-          </div>
-          <div class="mb-3">
-            <label for="contractEndDate" class="form-label">End Date</label>
-            <input type="date" class="form-control" id="contractEndDate" required>
-          </div>
-          <div class="mb-3">
-            <label for="contractStatus" class="form-label">Status</label>
-            <select class="form-control" id="contractStatus" required>
-              <option value="Active">Active</option>
-              <option value="Pending">Pending</option>
-              <option value="Completed">Completed</option>
-              <option value="Terminated">Terminated</option>
-            </select>
+              <label for="contractDepartment">Department *</label>
+            </div>
+            <div class="form-group">
+              <select class="form-select" id="contractContractor" required>
+                <option value="">Select Contractor</option>
+              </select>
+              <label for="contractContractor">Contractor *</label>
+            </div>
+            <div class="form-group">
+              <input type="date" class="form-control" id="contractStartDate" placeholder=" " required>
+              <label for="contractStartDate">Start Date *</label>
+            </div>
+            <div class="form-group">
+              <input type="date" class="form-control" id="contractEndDate" placeholder=" " required>
+              <label for="contractEndDate">End Date *</label>
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <textarea class="form-control" id="contractRemarks" placeholder=" " rows="5"></textarea>
+              <label for="contractRemarks">Comments</label>
+            </div>
           </div>
         </form>
       </div>
@@ -223,7 +548,6 @@
     </div>
   </div>
 </div>
-
 <script>
 // Data storage
 let contractors = [];
@@ -234,9 +558,43 @@ let contractorChart, contractChart, departmentChart, departmentBarChart, timelin
 
 // Color palette for dynamic departments
 const colors = [
-  '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69',
+  '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a69',
   '#6610f2', '#e83e8c', '#fd7e14', '#20c9a6', '#d63384', '#6f42c1', '#dc3545'
 ];
+
+function validateForm(formId) {
+  const form = document.getElementById(formId);
+  const requiredInputs = form.querySelectorAll('input[required], select[required], textarea[required], input[type="radio"][required]');
+  let isValid = true;
+
+  form.querySelectorAll('.error-message').forEach(el => el.remove());
+  requiredInputs.forEach(input => input.classList.remove('error'));
+
+  requiredInputs.forEach(input => {
+    if (input.type === 'radio') {
+      const radioGroup = form.querySelector(`input[name="${input.name}"]:checked`);
+      if (!radioGroup) {
+        isValid = false;
+        input.classList.add('error');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = 'Please select an option';
+        input.parentNode.parentNode.appendChild(errorDiv);
+        errorDiv.style.display = 'block';
+      }
+    } else if (!input.value.trim()) {
+      isValid = false;
+      input.classList.add('error');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.textContent = 'Please fill in this field';
+      input.parentNode.appendChild(errorDiv);
+      errorDiv.style.display = 'block';
+    }
+  });
+
+  return isValid;
+}
 
 function initCharts() {
   try {
@@ -245,17 +603,12 @@ function initCharts() {
       type: 'doughnut',
       data: {
         labels: ['Total Contractors'],
-        datasets: [{
-          data: [contractors.length],
-          backgroundColor: ['#4e73df']
-        }]
+        datasets: [{ data: [contractors.length], backgroundColor: ['#4e73df'] }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          title: { display: true, text: 'Contractor Count' }
-        }
+        plugins: { title: { display: true, text: 'Contractor Count', font: { size: 16 } } }
       }
     });
 
@@ -264,36 +617,23 @@ function initCharts() {
       type: 'doughnut',
       data: {
         labels: ['Total Contracts'],
-        datasets: [{
-          data: [contracts.length],
-          backgroundColor: ['#1cc88a']
-        }]
+        datasets: [{ data: [contracts.length], backgroundColor: ['#1cc88a'] }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          title: { display: true, text: 'Contract Count' }
-        }
+        plugins: { title: { display: true, text: 'Contract Count', font: { size: 16 } } }
       }
     });
 
     const departmentCtx = document.getElementById('departmentChart').getContext('2d');
     departmentChart = new Chart(departmentCtx, {
       type: 'pie',
-      data: {
-        labels: [],
-        datasets: [{
-          data: [],
-          backgroundColor: []
-        }]
-      },
+      data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          title: { display: true, text: 'Department Distribution (Pie)' }
-        }
+        plugins: { title: { display: true, text: 'Department Distribution (Pie)', font: { size: 16 } } }
       }
     });
 
@@ -302,21 +642,13 @@ function initCharts() {
       type: 'bar',
       data: {
         labels: [],
-        datasets: [{
-          label: 'Contracts by Department',
-          data: [],
-          backgroundColor: []
-        }]
+        datasets: [{ label: 'Contracts by Department', data: [], backgroundColor: [] }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          title: { display: true, text: 'Department Distribution (Bar)' }
-        },
-        scales: {
-          y: { beginAtZero: true, ticks: { stepSize: 1 } }
-        }
+        plugins: { title: { display: true, text: 'Department Distribution (Bar)', font: { size: 16 } } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
       }
     });
 
@@ -336,20 +668,10 @@ function initCharts() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          title: { display: true, text: 'Contract Timeline' }
-        },
+        plugins: { title: { display: true, text: 'Contract Timeline', font: { size: 16 } } },
         scales: {
-          x: {
-            type: 'time',
-            time: { unit: 'month', displayFormats: { month: 'MMM YYYY' } },
-            title: { display: true, text: 'Date' }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1 },
-            title: { display: true, text: 'Number of Contracts' }
-          }
+          x: { type: 'time', time: { unit: 'month', displayFormats: { month: 'MMM YYYY' } }, title: { display: true, text: 'Date' } },
+          y: { beginAtZero: true, ticks: { stepSize: 1 }, title: { display: true, text: 'Number of Contracts' } }
         }
       }
     });
@@ -361,9 +683,7 @@ function initCharts() {
 function updateDepartmentCharts() {
   try {
     const departments = [...new Set(contracts.map(contract => contract.department.trim()))].filter(dept => dept);
-    const counts = departments.map(dept => 
-      contracts.filter(contract => contract.department.trim() === dept).length
-    );
+    const counts = departments.map(dept => contracts.filter(contract => contract.department.trim() === dept).length);
     const backgroundColors = departments.map((_, index) => colors[index % colors.length]);
 
     departmentChart.data.labels = departments.length ? departments : ['No Departments'];
@@ -390,9 +710,7 @@ function updateTimelineChart() {
     });
 
     const sortedMonths = Array.from(months).sort();
-    const counts = sortedMonths.map(month => 
-      contracts.filter(contract => contract.startDate.startsWith(month)).length
-    );
+    const counts = sortedMonths.map(month => contracts.filter(contract => contract.startDate.startsWith(month)).length);
 
     timelineChart.data.labels = sortedMonths;
     timelineChart.data.datasets[0].data = counts;
@@ -412,7 +730,7 @@ function saveData() {
     updateTimelineChart();
   } catch (e) {
     console.error('Error saving to localStorage:', e);
-    alert('Failed to save data to localStorage. Check console for details.');
+    alert('Failed to save data to localStorage. Check console.');
   }
 }
 
@@ -428,27 +746,21 @@ function updateCharts() {
 }
 
 function saveContractor() {
-  const form = document.getElementById('contractorForm');
-  if (!form || !form.checkValidity()) {
-    console.warn('Form validation failed or form not found');
-    form?.reportValidity();
+  if (!validateForm('contractorForm')) {
+    alert('Please fill all required fields: Name, Contact, Address, and Area.');
     return;
   }
 
   try {
     const contractor = {
       id: document.getElementById('contractorId').value || Date.now().toString(),
+      title: document.getElementById('contractorTitle').value,
       name: document.getElementById('contractorName').value.trim(),
       contact: document.getElementById('contractorContact').value.trim(),
       email: document.getElementById('contractorEmail').value.trim(),
-      address: document.getElementById('contractorAddress').value.trim()
+      address: document.getElementById('contractorAddress').value.trim(),
+      area: document.querySelector('input[name="contractorArea"]:checked').value
     };
-
-    if (!contractor.name || !contractor.contact || !contractor.email || !contractor.address) {
-      console.warn('Empty fields detected:', contractor);
-      alert('All fields are required and cannot be empty.');
-      return;
-    }
 
     const index = contractors.findIndex(c => c.id === contractor.id);
     if (index > -1) {
@@ -456,24 +768,20 @@ function saveContractor() {
       console.log('Updated contractor:', contractor);
     } else {
       contractors.push(contractor);
-      console.log('Added new contractor:', contractor);
+      console.log('Added contractor:', contractor);
     }
 
     saveData();
     updateContractorTable();
     updateContractorDropdown();
     const modal = bootstrap.Modal.getInstance(document.getElementById('contractorModal'));
-    if (modal) {
-      modal.hide();
-    } else {
-      console.warn('Contractor modal instance not found');
-    }
-    form.reset();
+    if (modal) modal.hide();
+    document.getElementById('contractorForm').reset();
     document.getElementById('contractorId').value = '';
     console.log('Contractor form reset and modal closed');
   } catch (e) {
     console.error('Error in saveContractor:', e);
-    alert('An error occurred while saving the contractor. Check console for details.');
+    alert('An error occurred while saving the contractor. Check console.');
   }
 }
 
@@ -482,10 +790,14 @@ function editContractor(id) {
     const contractor = contractors.find(c => c.id === id);
     if (contractor) {
       document.getElementById('contractorId').value = contractor.id;
-      document.getElementById('contractorName').value = contractor.name;
-      document.getElementById('contractorContact').value = contractor.contact;
-      document.getElementById('contractorEmail').value = contractor.email;
-      document.getElementById('contractorAddress').value = contractor.address;
+      document.getElementById('contractorTitle').value = contractor.title || '';
+      document.getElementById('contractorName').value = contractor.name || '';
+      document.getElementById('contractorContact').value = contractor.contact || '';
+      document.getElementById('contractorEmail').value = contractor.email || '';
+      document.getElementById('contractorAddress').value = contractor.address || '';
+      if (contractor.area) {
+        document.getElementById(`area${contractor.area}`).checked = true;
+      }
       new bootstrap.Modal(document.getElementById('contractorModal')).show();
       console.log('Editing contractor:', contractor);
     } else {
@@ -499,13 +811,14 @@ function editContractor(id) {
 function deleteContractor(id) {
   if (confirm('Are you sure you want to delete this contractor?')) {
     try {
-      const contractorName = contractors.find(c => c.id === id)?.name;
+      const contractor = contractors.find(c => c.id === id);
+      const contractorName = contractor ? `${contractor.title || ''} ${contractor.name}`.trim() : '';
       contractors = contractors.filter(c => c.id !== id);
       contracts = contracts.filter(c => c.contractorName !== contractorName);
       saveData();
       updateContractorTable();
-      updateContractTable();
       updateContractorDropdown();
+      updateContractTable();
       console.log('Deleted contractor with id:', id);
     } catch (e) {
       console.error('Error in deleteContractor:', e);
@@ -522,7 +835,7 @@ function updateContractorDropdown() {
     }
     select.innerHTML = '<option value="">Select Contractor</option>' +
       contractors.map(contractor => 
-        `<option value="${contractor.name}">${contractor.name}</option>`
+        `<option value="${contractor.title ? contractor.title + ' ' : ''}${contractor.name}">${contractor.title ? contractor.title + ' ' : ''}${contractor.name}</option>`
       ).join('');
     console.log('Updated contractor dropdown with', contractors.length, 'options');
   } catch (e) {
@@ -531,10 +844,8 @@ function updateContractorDropdown() {
 }
 
 function saveContract() {
-  const form = document.getElementById('contractForm');
-  if (!form || !form.checkValidity()) {
-    console.warn('Contract form validation failed or form not found');
-    form?.reportValidity();
+  if (!validateForm('contractForm')) {
+    alert('Please fill all required fields: Contractor, Department, Start Date, and End Date.');
     return;
   }
 
@@ -545,18 +856,12 @@ function saveContract() {
       department: document.getElementById('contractDepartment').value.trim(),
       startDate: document.getElementById('contractStartDate').value,
       endDate: document.getElementById('contractEndDate').value,
-      status: document.getElementById('contractStatus').value
+      remarks: document.getElementById('contractRemarks').value.trim()
     };
-
-    if (!contract.department) {
-      console.warn('Empty department detected');
-      alert('Department cannot be empty');
-      return;
-    }
 
     if (new Date(contract.startDate) > new Date(contract.endDate)) {
       console.warn('Invalid date range:', contract.startDate, contract.endDate);
-      alert('End date must be after start date');
+      alert('End Date must be after Start Date');
       return;
     }
 
@@ -566,41 +871,32 @@ function saveContract() {
       console.log('Updated contract:', contract);
     } else {
       contracts.push(contract);
-      console.log('Added new contract:', contract);
+      console.log('Added contract:', contract);
     }
 
     saveData();
     updateContractTable();
     const modal = bootstrap.Modal.getInstance(document.getElementById('contractModal'));
-    if (modal) {
-      modal.hide();
-    } else {
-      console.warn('Contract modal instance not found');
-    }
-    form.reset();
+    if (modal) modal.hide();
+    document.getElementById('contractForm').reset();
     document.getElementById('contractId').value = '';
     console.log('Contract form reset and modal closed');
   } catch (e) {
     console.error('Error in saveContract:', e);
-    alert('An error occurred while saving the contract. Check console for details.');
+    alert('An error occurred while saving the contract. Check console.');
   }
 }
 
 function updateContractTable() {
   try {
-    const statusFilter = document.getElementById('statusFilter').value;
     const tbody = document.getElementById('contractTableBody');
     if (!tbody) {
       console.error('Contract table body not found');
       return;
     }
 
-    const filteredContracts = statusFilter === 'all' 
-      ? contracts 
-      : contracts.filter(contract => contract.status === statusFilter);
-
-    tbody.innerHTML = filteredContracts.map(contract => {
-      const contractorExists = contractors.some(c => c.name === contract.contractorName);
+    tbody.innerHTML = contracts.map(contract => {
+      const contractorExists = contractors.some(c => `${c.title || ''} ${c.name}`.trim() === contract.contractorName);
       const contractorNameCell = contractorExists 
         ? contract.contractorName 
         : `<span class="text-danger">${contract.contractorName} (Deleted)</span>`;
@@ -611,31 +907,21 @@ function updateContractTable() {
           <td>${contract.department || 'N/A'}</td>
           <td>${contract.startDate || 'N/A'}</td>
           <td>${contract.endDate || 'N/A'}</td>
-          <td><span class="badge ${getStatusBadgeClass(contract.status)}">${contract.status || 'N/A'}</span></td>
+          <td>${contract.remarks || 'N/A'}</td>
           <td class="action-buttons">
-            <button class="btn btn-sm btn-primary" onclick="editContract('${contract.id}')">
+            <button class="action-btn edit" onclick="editContract('${contract.id}')">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteContract('${contract.id}')">
+            <button class="action-btn delete" onclick="deleteContract('${contract.id}')">
               <i class="bi bi-trash"></i>
             </button>
           </td>
         </tr>
       `;
     }).join('');
-    console.log('Contract table updated with', filteredContracts.length, 'contracts');
+    console.log('Contract table updated with', contracts.length, 'contracts');
   } catch (e) {
     console.error('Error in updateContractTable:', e);
-  }
-}
-
-function getStatusBadgeClass(status) {
-  switch(status) {
-    case 'Active': return 'bg-success';
-    case 'Pending': return 'bg-warning';
-    case 'Completed': return 'bg-info';
-    case 'Terminated': return 'bg-danger';
-    default: return 'bg-secondary';
   }
 }
 
@@ -648,7 +934,7 @@ function editContract(id) {
       document.getElementById('contractDepartment').value = contract.department;
       document.getElementById('contractStartDate').value = contract.startDate;
       document.getElementById('contractEndDate').value = contract.endDate;
-      document.getElementById('contractStatus').value = contract.status || 'Active';
+      document.getElementById('contractRemarks').value = contract.remarks || '';
       new bootstrap.Modal(document.getElementById('contractModal')).show();
       console.log('Editing contract:', contract);
     } else {
@@ -682,15 +968,16 @@ function updateContractorTable() {
 
     tbody.innerHTML = contractors.map(contractor => `
       <tr>
-        <td>${contractor.name || 'N/A'}</td>
+        <td>${contractor.title ? contractor.title + ' ' : ''}${contractor.name || 'N/A'}</td>
         <td>${contractor.contact || 'N/A'}</td>
         <td>${contractor.email || 'N/A'}</td>
         <td>${contractor.address || 'N/A'}</td>
+        <td>${contractor.area || 'N/A'}</td>
         <td class="action-buttons">
-          <button class="btn btn-sm btn-primary" onclick="editContractor('${contractor.id}')">
+          <button class="action-btn edit" onclick="editContractor('${contractor.id}')">
             <i class="bi bi-pencil"></i>
           </button>
-          <button class="btn btn-sm btn-danger" onclick="deleteContractor('${contractor.id}')">
+          <button class="action-btn delete" onclick="deleteContractor('${contractor.id}')">
             <i class="bi bi-trash"></i>
           </button>
         </td>
@@ -730,58 +1017,19 @@ function deleteAllContracts() {
   }
 }
 
-function filterContracts() {
-  try {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const tbody = document.getElementById('contractTableBody');
-    if (!tbody) {
-      console.error('Contract table body not found');
-      return;
-    }
-
-    const filteredContracts = statusFilter === 'all' 
-      ? contracts 
-      : contracts.filter(contract => contract.status === statusFilter);
-
-    tbody.innerHTML = filteredContracts.map(contract => {
-      const contractorExists = contractors.some(c => c.name === contract.contractorName);
-      const contractorNameCell = contractorExists 
-        ? contract.contractorName 
-        : `<span class="text-danger">${contract.contractorName} (Deleted)</span>`;
-
-      return `
-        <tr>
-          <td>${contractorNameCell}</td>
-          <td>${contract.department || 'N/A'}</td>
-          <td>${contract.startDate || 'N/A'}</td>
-          <td>${contract.endDate || 'N/A'}</td>
-          <td><span class="badge ${getStatusBadgeClass(contract.status)}">${contract.status || 'N/A'}</span></td>
-          <td class="action-buttons">
-            <button class="btn btn-sm btn-primary" onclick="editContract('${contract.id}')">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteContract('${contract.id}')">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-    console.log('Filtered contracts table updated with', filteredContracts.length, 'contracts');
-  } catch (e) {
-    console.error('Error in filterContracts:', e);
-  }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   try {
-    // Initialize data
-    contractors = JSON.parse(localStorage.getItem('contractors')) || [];
-    contracts = JSON.parse(localStorage.getItem('contracts')) || [];
+    try {
+      contractors = JSON.parse(localStorage.getItem('contractors')) || [];
+      contracts = JSON.parse(localStorage.getItem('contracts')) || [];
+    } catch (e) {
+      console.error('Error parsing localStorage data:', e);
+      contractors = [];
+      contracts = [];
+    }
     console.log('Loaded contractors:', contractors);
     console.log('Loaded contracts:', contracts);
 
-    // Initialize UI
     initCharts();
     updateContractorTable();
     updateContractTable();
@@ -790,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateContractorDropdown();
   } catch (e) {
     console.error('Error in DOMContentLoaded:', e);
-    alert('Failed to initialize the application. Check console for details.');
+    alert('Failed to initialize the application. Check console.');
   }
 });
 </script>
