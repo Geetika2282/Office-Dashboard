@@ -5,148 +5,309 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #f8f9fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      font-family: 'Inter', sans-serif;
+      color: #1f2937;
     }
     .container {
       max-width: 1400px;
       padding: 20px;
+      margin: 0 auto;
     }
-    .tab-content { 
-      margin-top: 20px;
-      background: white;
+    .dashboard-header {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: white;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      text-align: center;
     }
-    .modal-body input, .modal-body select { 
-      margin-bottom: 15px;
-      padding: 10px;
-      border-radius: 4px;
-      border: 1px solid #ced4da;
+    .dashboard-header h2 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.8rem;
     }
-    .modal-body input:focus, .modal-body select:focus {
-      border-color: #80bdff;
-      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    }
-    .action-buttons { 
-      display: flex; 
-      gap: 8px; 
-      justify-content: center; 
-    }
-    .error-message { 
-      color: #dc3545; 
-      font-size: 0.85em; 
-      margin-top: -12px; 
-      margin-bottom: 10px; 
-      display: none; 
-    }
-    .form-control.error { 
-      border-color: #dc3545;
-      box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
-    }
-    .table {
+    .tab-content {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       margin-top: 20px;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .table thead th {
-      background-color: #f8f9fa;
-      border-bottom: 2px solid #dee2e6;
-      padding: 12px;
-      font-weight: 600;
-    }
-    .table tbody td {
-      padding: 12px;
-      vertical-align: middle;
-    }
-    .btn-primary {
-      background-color: #0d6efd;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .btn-primary:hover {
-      background-color: #0b5ed7;
-      transform: translateY(-1px);
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .btn-danger:hover {
-      background-color: #bb2d3b;
-      transform: translateY(-1px);
     }
     .nav-tabs {
-      border-bottom: 2px solid #dee2e6;
+      border: none;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
       margin-bottom: 0;
     }
     .nav-tabs .nav-link {
       border: none;
-      color: #6c757d;
-      padding: 12px 20px;
-      font-weight: 500;
+      color: #6b7280;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
       transition: all 0.3s ease;
+      position: relative;
     }
     .nav-tabs .nav-link:hover {
-      border: none;
-      color: #0d6efd;
+      color: #2563eb;
+      background: #f3f4f6;
+      transform: scale(1.05);
     }
     .nav-tabs .nav-link.active {
-      color: #0d6efd;
+      color: #2563eb;
+      background: #e0f2fe;
       border: none;
-      border-bottom: 3px solid #0d6efd;
-      background: none;
     }
-    .form-check {
-      margin: 15px 0;
+    .nav-tabs .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 3px;
+      background: #2563eb;
+      border-radius: 2px;
     }
-    .form-check-input:checked {
-      background-color: #0d6efd;
-      border-color: #0d6efd;
+    .table {
+      margin-top: 20px;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
     }
-    .modal-content {
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    .table thead th {
+      background: #f3f4f6;
+      color: #374151;
+      font-weight: 600;
+      padding: 16px;
+      border: none;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .modal-header {
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #dee2e6;
-      padding: 15px 20px;
+    .table tbody tr {
+      background: #ffffff;
+      transition: background 0.2s ease;
     }
-    .modal-footer {
-      background-color: #f8f9fa;
-      border-top: 1px solid #dee2e6;
-      padding: 15px 20px;
+    .table tbody tr:nth-child(even) {
+      background: #f9fafb;
     }
-    .table-responsive {
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    .table tbody tr:hover {
+      background: #e0f2fe;
+    }
+    .table tbody td {
+      padding: 16px;
+      vertical-align: middle;
+      border: none;
+      font-size: 0.95rem;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 1rem;
+    }
+    .action-btn.view {
+      background: #14b8a6;
+      color: white;
+    }
+    .action-btn.edit {
+      background: #2563eb;
+      color: white;
+    }
+    .action-btn.delete {
+      background: #ef4444;
+      color: white;
+    }
+    .action-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     .promoted {
-      color: #198754;
+      color: #10b981;
       font-weight: 500;
     }
     .left {
-      color: #dc3545;
+      color: #ef4444;
       font-weight: 500;
     }
     .active {
-      color: #212529;
+      color: #1f2937;
+    }
+    .modal-content {
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      background: #ffffff;
+      border: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-header {
+      background: #f9fafb;
+      border-bottom: none;
+      padding: 20px 24px;
+      border-radius: 12px 12px 0 0;
+    }
+    .modal-title {
+      font-weight: 700;
+      color: #1f2937;
+      font-size: 1.25rem;
+    }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-footer {
+      background: #f9fafb;
+      border-top: none;
+      padding: 16px 24px;
+      border-radius: 0 0 12px 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      color: #6b7280;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      pointer-events: none;
+      background: #ffffff;
+      padding: 0 4px;
+    }
+    .form-group input:focus + label,
+    .form-group input:not(:placeholder-shown) + label,
+    .form-group select:focus + label,
+    .form-group select:not([value=""]) + label {
+      top: -8px;
+      left: 8px;
+      font-size: 0.75rem;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    .form-control, .form-select {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      height: 48px;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+      outline: none;
+    }
+    .form-control:disabled {
+      background: #f3f4f6;
+      border: none;
+      color: #374151;
+      cursor: not-allowed;
+    }
+    .form-check {
+      margin: 12px 0;
+    }
+    .form-check-input:checked {
+      background-color: #2563eb;
+      border-color: #2563eb;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .btn-secondary {
+      background: #6b7280;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      background: #4b5563;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      display: none;
+    }
+    .form-control.error, .form-select.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 576px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-tabs {
+        flex-wrap: wrap;
+      }
+      .nav-tabs .nav-link {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+      .dashboard-header h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
 <div class="container mt-4">
-  <h2 class="text-center">Employee Dashboard</h2>
+  <div class="dashboard-header">
+    <h2>Employee Dashboard</h2>
+  </div>
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button">Employee Details</button>
@@ -160,25 +321,18 @@
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="promotion-tab" data-bs-toggle="tab" data-bs-target="#promotion" type="button">Promotions</button>
     </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary" type="button">Salary Update</button>
-    </li>
   </ul>
   <div class="tab-content">
     <!-- Employee Details Tab -->
     <div class="tab-pane fade show active" id="details">
       <div class="table-responsive">
-        <table class="table table-bordered mt-3">
+        <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>ID</th>
-              <th>Join Date</th>
-              <th>Leave Date</th>
+              <th>Employee ID</th>
+              <th>Employee Name</th>
               <th>Designation</th>
-              <th>Group</th>
-              <th>Gender</th>
-              <th>Level</th>
+              <th>Area</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -189,64 +343,73 @@
 
     <!-- Add Employee Tab -->
     <div class="tab-pane fade" id="add">
-      <div class="d-flex justify-content-end mb-3">
+      <div class="d-flex justify-content-end mb-4">
         <button class="btn btn-primary" onclick="openModal('add')">Add New</button>
       </div>
-      <table class="table table-bordered mt-3">
-        <thead><tr><th>Name</th><th>ID</th><th>Join Date</th><th>Designation</th><th>Group</th><th>Gender</th><th>Level</th><th>Actions</th></tr></thead>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Employee ID</th>
+            <th>Join Date</th>
+            <th>Designation</th>
+            <th>Group</th>
+            <th>Gender</th>
+            <th>Area</th>
+            <th>Level</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
         <tbody id="addTable"></tbody>
       </table>
     </div>
 
     <!-- Group Change Tab -->
     <div class="tab-pane fade" id="group">
-      <div class="d-flex justify-content-end mb-3">
+      <div class="d-flex justify-content-end mb-4">
         <button class="btn btn-primary" onclick="openModal('group')">Add New</button>
       </div>
-      <table class="table table-bordered mt-3">
-        <thead><tr><th>ID</th><th>From Group</th><th>To Group</th><th>Transfer Date</th><th>Remark</th><th>Level</th><th>Actions</th></tr></thead>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>From Group</th>
+            <th>To Group</th>
+            <th>Transfer Date</th>
+            <th>Remark</th>
+            <th>Level</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
         <tbody id="groupTable"></tbody>
       </table>
     </div>
 
     <!-- Promotions Tab -->
     <div class="tab-pane fade" id="promotion">
-      <div class="d-flex justify-content-end mb-3">
+      <div class="d-flex justify-content-end mb-4">
         <button class="btn btn-primary" onclick="openModal('promotion')">Add New</button>
       </div>
-      <table class="table table-bordered mt-3">
-        <thead><tr><th>Name/ID</th><th>Designation</th><th>Effective Date</th><th>Remark</th><th>Level</th><th>Actions</th></tr></thead>
-        <tbody id="promotionTable"></tbody>
-      </table>
-    </div>
-
-    <!-- Salary Update Tab -->
-    <div class="tab-pane fade" id="salary">
-      <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-primary" onclick="openModal('salary')">Add New</button>
-      </div>
-      <table class="table table-bordered mt-3">
+      <table class="table">
         <thead>
           <tr>
-            <th>Employee ID</th>
-            <th>Name</th>
-            <th>Year</th>
-            <th>Month</th>
-            <th>Previous Salary</th>
-            <th>Update Amount</th>
-            <th>New Salary</th>
+            <th>Employee Name/ID</th>
+            <th>Designation</th>
+            <th>Effective Date</th>
+            <th>Remark</th>
+            <th>Level</th>
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="salaryTable"></tbody>
+        <tbody id="promotionTable"></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Form Modal -->
 <div class="modal fade" id="formModal" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Fill Details</h5>
@@ -263,19 +426,35 @@
   </div>
 </div>
 
+<!-- View Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Employee Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="viewDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   let currentTab = '';
   let employees = [];
   let groupChanges = [];
   let promotions = [];
-  let salaryUpdates = [];
 
-  // Function to update all tables
   function updateAllTables() {
     updateEmployeeTable();
     updateGroupTable();
     updatePromotionTable();
-    updateSalaryTable();
   }
 
   function openModal(tab, data = null) {
@@ -285,123 +464,201 @@
 
     if (tab === 'add') {
       form.innerHTML = `
-        <input class="form-control" id="name" placeholder="Employee Name *" value="${data?.name || ''}" required>
-        <input class="form-control" id="id" placeholder="Employee ID *" value="${data?.id || ''}" required>
-        <input class="form-control" id="joinDate" type="text" placeholder="Date of Joining (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.joinDate || ''}" required>
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="stillWorking" ${!data?.leaveDate ? 'checked' : ''} onchange="toggleLeaveDate()">
-          <label class="form-check-label" for="stillWorking">Still Working</label>
+        <div class="form-grid">
+          <div class="form-group">
+            <input class="form-control" id="employeeName" placeholder=" " value="${data?.employeeName || ''}" required>
+            <label for="employeeName">Employee Name *</label>
+          </div>
+          <div class="form-group">
+            <input class="form-control" id="employeeId" placeholder=" " value="${data?.employeeId || ''}" required>
+            <label for="employeeId">Employee ID *</label>
+          </div>
+          <div class="form-group">
+            <input class="form-control" id="joinDate" type="text" placeholder=" " onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.joinDate || ''}" required>
+            <label for="joinDate">Date of Joining *</label>
+          </div>
+          <div class="form-group">
+            <input class="form-control" id="leaveDate" type="text" placeholder=" " onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.leaveDate || ''}" ${!data?.leaveDate ? 'disabled' : ''}>
+            <label for="leaveDate">Date of Leaving</label>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="stillWorking" ${!data?.leaveDate ? 'checked' : ''} onchange="toggleLeaveDate()">
+              <label class="form-check-label" for="stillWorking">Still Working</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="designation" required>
+              <option value="" disabled ${!data?.designation ? 'selected' : ''}>Select Designation</option>
+              <option ${data?.designation === 'Manager' ? 'selected' : ''}>Manager</option>
+              <option ${data?.designation === 'Staff' ? 'selected' : ''}>Staff</option>
+            </select>
+            <label for="designation">Designation *</label>
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="group" required>
+              <option value="" disabled ${!data?.group ? 'selected' : ''}>Select Group</option>
+              <option ${data?.group === 'Group A' ? 'selected' : ''}>Group A</option>
+              <option ${data?.group === 'Group B' ? 'selected' : ''}>Group B</option>
+            </select>
+            <label for="group">Group *</label>
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="area" required>
+              <option value="" disabled ${!data?.area ? 'selected' : ''}>Select Area</option>
+              <option ${data?.area === 'EC' ? 'selected' : ''}>EC</option>
+              <option ${data?.area === 'KP' ? 'selected' : ''}>KP</option>
+            </select>
+            <label for="area">Area *</label>
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="gender" required>
+              <option value="" disabled ${!data?.gender ? 'selected' : ''}>Select Gender</option>
+              <option ${data?.gender === 'M' ? 'selected' : ''}>M</option>
+              <option ${data?.gender === 'F' ? 'selected' : ''}>F</option>
+              <option ${data?.gender === 'T' ? 'selected' : ''}>T</option>
+            </select>
+            <label for="gender">Gender *</label>
+          </div>
         </div>
-        <input class="form-control" id="leaveDate" type="text" placeholder="Date of Leaving (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.leaveDate || ''}" ${!data?.leaveDate ? 'disabled' : ''}>
-        <select class="form-control" id="designation" required>
-          <option value="">Select Designation *</option>
-          <option ${data?.designation === 'Manager' ? 'selected' : ''}>Manager</option>
-          <option ${data?.designation === 'Staff' ? 'selected' : ''}>Staff</option>
-        </select>
-        <select class="form-control" id="group" required>
-          <option value="">Select Group *</option>
-          <option ${data?.group === 'Group A' ? 'selected' : ''}>Group A</option>
-          <option ${data?.group === 'Group B' ? 'selected' : ''}>Group B</option>
-        </select>
-        <select class="form-control" id="gender" required>
-          <option value="">Select Gender *</option>
-          <option ${data?.gender === 'M' ? 'selected' : ''}>M</option>
-          <option ${data?.gender === 'F' ? 'selected' : ''}>F</option>
-          <option ${data?.gender === 'T' ? 'selected' : ''}>T</option>
-        </select>
-        <input class="form-control" id="level" placeholder="Level *" value="${data?.level || ''}" required>
+        <div class="form-group">
+          <input class="form-control" id="level" placeholder=" " value="${data?.level || ''}">
+          <label for="level">Level</label>
+        </div>
       `;
     } else if (tab === 'group') {
-      // Create select for existing active employees only
       const activeEmployees = employees.filter(emp => {
         if (!emp.leaveDate) return true;
         return new Date(emp.leaveDate) > new Date();
       });
 
       const employeeOptions = activeEmployees.map(emp => 
-        `<option value="${emp.id}" ${data?.id === emp.id ? 'selected' : ''}>${emp.name} (${emp.id})</option>`
+        `<option value="${emp.employeeId}" ${data?.employeeId === emp.employeeId ? 'selected' : ''}>${emp.employeeName} (${emp.employeeId})</option>`
       ).join('');
 
       form.innerHTML = `
-        <select class="form-control" id="id" required>
-          <option value="">Select Employee *</option>
-          ${employeeOptions}
-        </select>
-        <select class="form-control" id="fromGroup" required>
-          <option value="">From Group *</option>
-          <option ${data?.fromGroup === 'Group A' ? 'selected' : ''}>Group A</option>
-          <option ${data?.fromGroup === 'Group B' ? 'selected' : ''}>Group B</option>
-        </select>
-        <select class="form-control" id="toGroup" required>
-          <option value="">To Group *</option>
-          <option ${data?.toGroup === 'Group A' ? 'selected' : ''}>Group A</option>
-          <option ${data?.toGroup === 'Group B' ? 'selected' : ''}>Group B</option>
-        </select>
-        <input class="form-control" id="transferDate" type="text" placeholder="Transfer Date (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.transferDate || ''}" required>
-        <input class="form-control" id="remark" placeholder="Remark (Optional)" value="${data?.remark || ''}">
-        <input class="form-control" id="level" placeholder="Level *" value="${data?.level || ''}" required>
+        <div class="form-group">
+          <select class="form-control" id="employeeId" required>
+            <option value="" disabled ${!data?.employeeId ? 'selected' : ''}>Select Employee</option>
+            ${employeeOptions}
+          </select>
+          <label for="employeeId">Employee *</label>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="fromGroup" required>
+            <option value="" disabled ${!data?.fromGroup ? 'selected' : ''}>Select Group</option>
+            <option ${data?.fromGroup === 'Group A' ? 'selected' : ''}>Group A</option>
+            <option ${data?.fromGroup === 'Group B' ? 'selected' : ''}>Group B</option>
+          </select>
+          <label for="fromGroup">From Group *</label>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="toGroup" required>
+            <option value="" disabled ${!data?.toGroup ? 'selected' : ''}>Select Group</option>
+            <option ${data?.toGroup === 'Group A' ? 'selected' : ''}>Group A</option>
+            <option ${data?.toGroup === 'Group B' ? 'selected' : ''}>Group B</option>
+          </select>
+          <label for="toGroup">To Group *</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="transferDate" type="text" placeholder=" " onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.transferDate || ''}" required>
+          <label for="transferDate">Transfer Date *</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="remark" placeholder=" " value="${data?.remark || ''}">
+          <label for="remark">Remark</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="level" placeholder=" " value="${data?.level || ''}" required>
+          <label for="level">Level *</label>
+        </div>
       `;
     } else if (tab === 'promotion') {
-      // Create select for existing active employees only
       const activeEmployees = employees.filter(emp => {
         if (!emp.leaveDate) return true;
         return new Date(emp.leaveDate) > new Date();
       });
 
       const employeeOptions = activeEmployees.map(emp => 
-        `<option value="${emp.id}" ${data?.nameId === emp.id ? 'selected' : ''}>${emp.name} (${emp.id})</option>`
+        `<option value="${emp.employeeId}" ${data?.employeeId === emp.employeeId ? 'selected' : ''}>${emp.employeeName} (${emp.employeeId})</option>`
       ).join('');
 
       form.innerHTML = `
-        <select class="form-control" id="nameId" required>
-          <option value="">Select Employee *</option>
-          ${employeeOptions}
-        </select>
-        <select class="form-control" id="designation" required>
-          <option value="">Select Designation *</option>
-          <option ${data?.designation === 'Manager' ? 'selected' : ''}>Manager</option>
-          <option ${data?.designation === 'Staff' ? 'selected' : ''}>Staff</option>
-        </select>
-        <input class="form-control" id="effectiveDate" type="text" placeholder="Effective Date (YYYY-MM-DD) *" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.effectiveDate || ''}" required>
-        <input class="form-control" id="remark" placeholder="Remark (Optional)" value="${data?.remark || ''}">
-        <input class="form-control" id="level" placeholder="Level *" value="${data?.level || ''}" required>
-      `;
-    } else if (tab === 'salary') {
-      // Create select for existing active employees only
-      const activeEmployees = employees.filter(emp => {
-        if (!emp.leaveDate) return true;
-        return new Date(emp.leaveDate) > new Date();
-      });
-
-      const employeeOptions = activeEmployees.map(emp => 
-        `<option value="${emp.id}" ${data?.employeeId === emp.id ? 'selected' : ''}>${emp.name} (${emp.id})</option>`
-      ).join('');
-
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-
-      const monthOptions = months.map(month => 
-        `<option value="${month}" ${data?.month === month ? 'selected' : ''}>${month}</option>`
-      ).join('');
-
-      form.innerHTML = `
-        <select class="form-control" id="employeeId" required>
-          <option value="">Select Employee *</option>
-          ${employeeOptions}
-        </select>
-        <select class="form-control" id="month" required>
-          <option value="">Select Month *</option>
-          ${monthOptions}
-        </select>
-        <input class="form-control" id="year" type="number" placeholder="Year *" min="2000" max="2100" value="${data?.year || new Date().getFullYear()}" required>
-        <input class="form-control" id="previousSalary" type="number" placeholder="Previous Salary *" min="0" step="0.01" value="${data?.previousSalary || ''}" required>
-        <input class="form-control" id="updateAmount" type="number" placeholder="Salary Update Amount *" min="0" step="0.01" value="${data?.updateAmount || ''}" required>
+        <div class="form-group">
+          <select class="form-control" id="employeeId" required>
+            <option value="" disabled ${!data?.employeeId ? 'selected' : ''}>Select Employee</option>
+            ${employeeOptions}
+          </select>
+          <label for="employeeId">Employee *</label>
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="designation" required>
+            <option value="" disabled ${!data?.designation ? 'selected' : ''}>Select Designation</option>
+            <option ${data?.designation === 'Manager' ? 'selected' : ''}>Manager</option>
+            <option ${data?.designation === 'Staff' ? 'selected' : ''}>Staff</option>
+          </select>
+          <label for="designation">Designation *</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="effectiveDate" type="text" placeholder=" " onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" value="${data?.effectiveDate || ''}" required>
+          <label for="effectiveDate">Effective Date *</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="remark" placeholder=" " value="${data?.remark || ''}">
+          <label for="remark">Remark</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" id="level" placeholder=" " value="${data?.level || ''}" required>
+          <label for="level">Level *</label>
+        </div>
       `;
     }
 
     const modal = new bootstrap.Modal(document.getElementById('formModal'));
+    modal.show();
+  }
+
+  function viewEmployee(data) {
+    const viewDetails = document.getElementById('viewDetails');
+    viewDetails.innerHTML = `
+      <div class="form-grid">
+        <div class="form-group">
+          <input class="form-control" value="${data.employeeName || ''}" disabled>
+          <label>Employee Name</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.employeeId || ''}" disabled>
+          <label>Employee ID</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.joinDate || ''}" disabled>
+          <label>Date of Joining</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.leaveDate || 'Still Working'}" disabled>
+          <label>Date of Leaving</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.designation || ''}" disabled>
+          <label>Designation</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.group || ''}" disabled>
+          <label>Group</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.gender || ''}" disabled>
+          <label>Gender</label>
+        </div>
+        <div class="form-group">
+          <input class="form-control" value="${data.area || 'N/A'}" disabled>
+          <label>Area</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <input class="form-control" value="${data.level || ''}" disabled>
+        <label>Level</label>
+      </div>
+    `;
+    const modal = new bootstrap.Modal(document.getElementById('viewModal'));
     modal.show();
   }
 
@@ -422,26 +679,20 @@
     const inputs = form.querySelectorAll('input[required], select[required]');
     let isValid = true;
     
-    // Remove any existing error messages and error classes
     form.querySelectorAll('.error-message').forEach(el => el.remove());
     inputs.forEach(input => input.classList.remove('error'));
 
-    // Validate each required input
     inputs.forEach(input => {
-      // Skip validation for leave date if still working is checked
       if (currentTab === 'add' && input.id === 'leaveDate' && document.getElementById('stillWorking').checked) {
         return;
       }
-
       if (!input.value.trim() && !input.disabled) {
         isValid = false;
         input.classList.add('error');
-        
-        // Create and insert error message
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
-        errorDiv.textContent = `Please fill in ${input.placeholder || 'this field'}`;
-        input.parentNode.insertBefore(errorDiv, input.nextSibling);
+        errorDiv.textContent = `Please fill in this field`;
+        input.parentNode.appendChild(errorDiv);
         errorDiv.style.display = 'block';
       }
     });
@@ -453,7 +704,6 @@
 
     const formData = {};
     form.querySelectorAll('input, select').forEach(input => {
-      // Don't include leave date in formData if still working is checked
       if (currentTab === 'add' && input.id === 'leaveDate' && document.getElementById('stillWorking').checked) {
         formData[input.id] = '';
       } else {
@@ -462,16 +712,14 @@
     });
 
     if (currentTab === 'add') {
-      if (formData.id) {
-        const index = employees.findIndex(emp => emp.id === formData.id);
+      if (formData.employeeId) {
+        const index = employees.findIndex(emp => emp.employeeId === formData.employeeId);
         if (index !== -1) {
-          // Check if there's a level change
           const oldLevel = parseInt(employees[index].level) || 0;
           const newLevel = parseInt(formData.level) || 0;
-          if (newLevel > oldLevel) {
-            // Add a promotion record for the level change
+          if (newLevel > oldLevel && formData.level) {
             promotions.push({
-              nameId: formData.id,
+              employeeId: formData.employeeId,
               designation: formData.designation,
               effectiveDate: new Date().toISOString().split('T')[0],
               remark: 'Level increase',
@@ -484,51 +732,34 @@
         }
       }
     } else if (currentTab === 'group') {
-      if (formData.id) {
-        const index = groupChanges.findIndex(gc => gc.id === formData.id);
+      if (formData.employeeId) {
+        const index = groupChanges.findIndex(gc => gc.employeeId === formData.employeeId);
         if (index !== -1) {
           groupChanges[index] = formData;
         } else {
           groupChanges.push(formData);
         }
-        // Update employee's group if it exists
-        const employeeIndex = employees.findIndex(emp => emp.id === formData.id);
+        const employeeIndex = employees.findIndex(emp => emp.employeeId === formData.employeeId);
         if (employeeIndex !== -1) {
           employees[employeeIndex].group = formData.toGroup;
         }
       }
     } else if (currentTab === 'promotion') {
-      if (formData.nameId) {
-        const index = promotions.findIndex(p => p.nameId === formData.nameId);
+      if (formData.employeeId) {
+        const index = promotions.findIndex(p => p.employeeId === formData.employeeId);
         if (index !== -1) {
           promotions[index] = formData;
         } else {
           promotions.push(formData);
         }
-        // Update employee's designation and level if it exists
-        const employeeIndex = employees.findIndex(emp => emp.id === formData.nameId);
+        const employeeIndex = employees.findIndex(emp => emp.employeeId === formData.employeeId);
         if (employeeIndex !== -1) {
           employees[employeeIndex].designation = formData.designation;
           employees[employeeIndex].level = formData.level;
         }
       }
-    } else if (currentTab === 'salary') {
-      if (formData.employeeId) {
-        const index = salaryUpdates.findIndex(s => 
-          s.employeeId === formData.employeeId && 
-          s.month === formData.month && 
-          s.year === formData.year
-        );
-        
-        if (index !== -1) {
-          salaryUpdates[index] = formData;
-        } else {
-          salaryUpdates.push(formData);
-        }
-      }
     }
 
-    // Update all tables after any change
     updateAllTables();
     bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
   }
@@ -537,22 +768,22 @@
     const tbody = document.getElementById('addTable');
     const detailsTbody = document.getElementById('detailsTable');
     
-    // Table content for Add Employee tab (without Leave Date)
     const addTableContent = employees.map(emp => `
       <tr>
-        <td>${emp.name || ''}</td>
-        <td>${emp.id || ''}</td>
+        <td>${emp.employeeName || ''}</td>
+        <td>${emp.employeeId || ''}</td>
         <td>${emp.joinDate || ''}</td>
         <td>${emp.designation || ''}</td>
         <td>${emp.group || ''}</td>
         <td>${emp.gender || ''}</td>
+        <td>${emp.area || 'N/A'}</td>
         <td>${emp.level || ''}</td>
         <td>
           <div class="action-buttons">
-            <button class="btn btn-sm btn-primary" onclick='editEmployee(${JSON.stringify(emp)})' title="Edit">
+            <button class="action-btn edit" onclick='editEmployee(${JSON.stringify(emp)})' title="Edit">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.id}')" title="Delete">
+            <button class="action-btn delete" onclick="deleteEmployee('${emp.employeeId}')" title="Delete">
               <i class="bi bi-trash"></i>
             </button>
           </div>
@@ -560,45 +791,33 @@
       </tr>
     `).join('');
 
-    // Table content for Employee Details tab (with Leave Date, promotion status, and employment status)
     const detailsTableContent = employees.map(emp => {
-      // Find the latest promotion for this employee
       const latestPromotion = promotions
-        .filter(p => p.nameId === emp.id)
+        .filter(p => p.employeeId === emp.employeeId)
         .sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate))[0];
 
-      // Check what was changed in the promotion
       const hasDesignationChange = latestPromotion && latestPromotion.designation !== emp.designation;
       const hasLevelChange = latestPromotion && parseInt(latestPromotion.level) === parseInt(emp.level);
       
-      // Apply styles based on what changed
-      const nameStyle = (hasDesignationChange || hasLevelChange) ? 'color: green;' : '';
-      const designationStyle = hasDesignationChange ? 'color: green;' : '';
-      const levelStyle = hasLevelChange ? 'color: green;' : '';
+      const nameStyle = (hasDesignationChange || hasLevelChange) ? 'color: #10b981;' : '';
+      const designationStyle = hasDesignationChange ? 'color: #10b981;' : '';
       const promotionText = (hasDesignationChange || hasLevelChange) ? ' (Promoted)' : '';
-      
-      // Check employment status
-      const hasLeft = emp.leaveDate && new Date(emp.leaveDate) <= new Date();
-      const statusStyle = hasLeft ? 'color: red;' : '';
-      const statusText = hasLeft ? ' (Left)' : ' (Active)';
-      const leaveDateDisplay = emp.leaveDate ? emp.leaveDate : 'Still Working';
       
       return `
         <tr>
-          <td style="${nameStyle}">${emp.name || ''}${promotionText}</td>
-          <td>${emp.id || ''}</td>
-          <td>${emp.joinDate || ''}</td>
-          <td style="${statusStyle}">${leaveDateDisplay}${statusText}</td>
+          <td>${emp.employeeId || ''}</td>
+          <td style="${nameStyle}">${emp.employeeName || ''}${promotionText}</td>
           <td style="${designationStyle}">${emp.designation || ''}</td>
-          <td>${emp.group || ''}</td>
-          <td>${emp.gender || ''}</td>
-          <td style="${levelStyle}">${emp.level || ''}</td>
+          <td>${emp.area || 'N/A'}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn btn-sm btn-primary" onclick='editEmployee(${JSON.stringify(emp)})' title="Edit">
+              <button class="action-btn view" onclick='viewEmployee(${JSON.stringify(emp)})' title="View">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button class="action-btn edit" onclick='editEmployee(${JSON.stringify(emp)})' title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
-              <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.id}')" title="Delete">
+              <button class="action-btn delete" onclick="deleteEmployee('${emp.employeeId}')" title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
             </div>
@@ -614,9 +833,8 @@
 
   function updateGroupTable() {
     const tbody = document.getElementById('groupTable');
-    // Filter out group changes for employees who have left
     const activeGroupChanges = groupChanges.filter(gc => {
-      const employee = employees.find(emp => emp.id === gc.id);
+      const employee = employees.find(emp => emp.employeeId === gc.employeeId);
       if (!employee) return false;
       if (!employee.leaveDate) return true;
       return new Date(employee.leaveDate) > new Date();
@@ -624,7 +842,7 @@
 
     tbody.innerHTML = activeGroupChanges.map(gc => `
       <tr>
-        <td>${gc.id || ''}</td>
+        <td>${gc.employeeId || ''}</td>
         <td>${gc.fromGroup || ''}</td>
         <td>${gc.toGroup || ''}</td>
         <td>${gc.transferDate || ''}</td>
@@ -632,10 +850,10 @@
         <td>${gc.level || ''}</td>
         <td>
           <div class="action-buttons">
-            <button class="btn btn-sm btn-primary" onclick='editGroupChange(${JSON.stringify(gc)})' title="Edit">
+            <button class="action-btn edit" onclick='editGroupChange(${JSON.stringify(gc)})' title="Edit">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteGroupChange('${gc.id}')" title="Delete">
+            <button class="action-btn delete" onclick="deleteGroupChange('${gc.employeeId}')" title="Delete">
               <i class="bi bi-trash"></i>
             </button>
           </div>
@@ -646,56 +864,28 @@
 
   function updatePromotionTable() {
     const tbody = document.getElementById('promotionTable');
-    // Filter out promotions for employees who have left
     const activePromotions = promotions.filter(p => {
-      const employee = employees.find(emp => emp.id === p.nameId);
+      const employee = employees.find(emp => emp.employeeId === p.employeeId);
       if (!employee) return false;
       if (!employee.leaveDate) return true;
       return new Date(employee.leaveDate) > new Date();
     });
 
-    tbody.innerHTML = activePromotions.map(p => `
-      <tr>
-        <td>${p.nameId || ''}</td>
-        <td>${p.designation || ''}</td>
-        <td>${p.effectiveDate || ''}</td>
-        <td>${p.remark || ''}</td>
-        <td>${p.level || ''}</td>
-        <td>
-          <div class="action-buttons">
-            <button class="btn btn-sm btn-primary" onclick='editPromotion(${JSON.stringify(p)})' title="Edit">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deletePromotion('${p.nameId}')" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  function updateSalaryTable() {
-    const tbody = document.getElementById('salaryTable');
-    tbody.innerHTML = salaryUpdates.map(update => {
-      const employee = employees.find(emp => emp.id === update.employeeId);
-      const newSalary = parseFloat(update.previousSalary) + parseFloat(update.updateAmount);
-      
+    tbody.innerHTML = activePromotions.map(p => {
+      const employee = employees.find(emp => emp.employeeId === p.employeeId);
       return `
         <tr>
-          <td>${update.employeeId || ''}</td>
-          <td>${employee ? employee.name : ''}</td>
-          <td>${update.year || ''}</td>
-          <td>${update.month || ''}</td>
-          <td>₹${parseFloat(update.previousSalary).toLocaleString('en-IN')}</td>
-          <td>₹${parseFloat(update.updateAmount).toLocaleString('en-IN')}</td>
-          <td>₹${newSalary.toLocaleString('en-IN')}</td>
+          <td>${employee ? `${employee.employeeName} (${p.employeeId})` : p.employeeId || ''}</td>
+          <td>${p.designation || ''}</td>
+          <td>${p.effectiveDate || ''}</td>
+          <td>${p.remark || ''}</td>
+          <td>${p.level || ''}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn btn-sm btn-primary" onclick='editSalaryUpdate(${JSON.stringify(update)})' title="Edit">
+              <button class="action-btn edit" onclick='editPromotion(${JSON.stringify(p)})' title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
-              <button class="btn btn-sm btn-danger" onclick="deleteSalaryUpdate('${update.employeeId}', '${update.month}', '${update.year}')" title="Delete">
+              <button class="action-btn delete" onclick="deletePromotion('${p.employeeId}')" title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
             </div>
@@ -705,35 +895,25 @@
     }).join('');
   }
 
-  function deleteEmployee(id) {
+  function deleteEmployee(employeeId) {
     if (confirm('Are you sure you want to delete this employee?')) {
-      employees = employees.filter(emp => emp.id !== id);
-      // Also remove related group changes and promotions
-      groupChanges = groupChanges.filter(gc => gc.id !== id);
-      promotions = promotions.filter(p => p.nameId !== id);
+      employees = employees.filter(emp => emp.employeeId !== employeeId);
+      groupChanges = groupChanges.filter(gc => gc.employeeId !== employeeId);
+      promotions = promotions.filter(p => p.employeeId !== employeeId);
       updateAllTables();
     }
   }
 
-  function deleteGroupChange(id) {
+  function deleteGroupChange(employeeId) {
     if (confirm('Are you sure you want to delete this group change record?')) {
-      groupChanges = groupChanges.filter(gc => gc.id !== id);
+      groupChanges = groupChanges.filter(gc => gc.employeeId !== employeeId);
       updateAllTables();
     }
   }
 
-  function deletePromotion(nameId) {
+  function deletePromotion(employeeId) {
     if (confirm('Are you sure you want to delete this promotion record?')) {
-      promotions = promotions.filter(p => p.nameId !== nameId);
-      updateAllTables();
-    }
-  }
-
-  function deleteSalaryUpdate(employeeId, month, year) {
-    if (confirm('Are you sure you want to delete this salary update record?')) {
-      salaryUpdates = salaryUpdates.filter(s => 
-        !(s.employeeId === employeeId && s.month === month && s.year === year)
-      );
+      promotions = promotions.filter(p => p.employeeId !== employeeId);
       updateAllTables();
     }
   }
@@ -753,18 +933,9 @@
     openModal('promotion', data);
   }
 
-  function editSalaryUpdate(data) {
-    currentTab = 'salary';
-    openModal('salary', data);
-  }
-
-  // Initialize tables
   document.addEventListener('DOMContentLoaded', function() {
     updateAllTables();
   });
 </script>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
