@@ -8,69 +8,159 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
-            background: #f7f8fa;
+            background: linear-gradient(135deg, #f7f8fa 60%, #e0e7ff 100%);
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
         }
         .dashboard-header {
-            background: #2563eb;
+            background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
             color: #fff;
-            border-radius: 18px;
-            margin: 40px auto 24px auto;
-            padding: 32px 0 24px 0;
+            border-radius: 22px;
+            margin: 40px auto 32px auto;
+            padding: 38px 0 28px 0;
             text-align: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            max-width: 90vw;
-            box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+            font-size: 2.8rem;
+            font-weight: 700;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(37,99,235,0.13);
+            letter-spacing: 1px;
         }
         .tab-card {
             background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(37,99,235,0.08);
-            padding: 32px 24px 24px 24px;
-            margin: 0 auto 32px auto;
-            max-width: 90vw;
+            border-radius: 22px;
+            box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+            padding: 36px 32px 32px 32px;
+            margin: 0 auto 40px auto;
+            max-width: 1000px;
+            min-height: 500px;
         }
         .nav-tabs {
             border: none;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            justify-content: center;
+            gap: 8px;
         }
         .nav-tabs .nav-link {
             border: none;
-            border-radius: 10px 10px 0 0;
+            border-radius: 12px 12px 0 0;
             color: #2563eb;
-            font-weight: 500;
-            background: #eaf1ff;
+            font-weight: 600;
+            background: linear-gradient(90deg, #eaf1ff 60%, #f1f5ff 100%);
             margin-right: 8px;
-            padding: 12px 32px;
-            transition: background 0.2s, color 0.2s;
+            padding: 16px 44px;
+            font-size: 1.15rem;
+            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.04);
         }
         .nav-tabs .nav-link.active {
-            background: #dbeafe;
-            color: #2563eb;
-            border-bottom: 2px solid #2563eb;
+            background: linear-gradient(90deg, #dbeafe 60%, #e0e7ff 100%);
+            color: #1746a2;
+            border-bottom: 3px solid #2563eb;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.10);
+        }
+        .tab-content > .tab-pane {
+            transition: opacity 0.4s;
         }
         .table {
-            border-radius: 16px;
+            border-radius: 18px;
             overflow: hidden;
+            font-size: 1.08rem;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
         }
         .table thead th {
             background: #f5f6fa;
             color: #222;
-            font-weight: 600;
+            font-weight: 700;
             border: none;
+            letter-spacing: 0.5px;
+        }
+        .table tbody tr {
+            transition: background 0.2s;
+        }
+        .table tbody tr:hover {
+            background: #e0e7ff33;
         }
         .table td, .table th {
             vertical-align: middle;
+            padding: 16px 14px;
         }
         .table-actions {
             white-space: nowrap;
         }
         .btn-primary {
-            background: #2563eb;
+            background: linear-gradient(90deg, #2563eb 60%, #1e40af 100%);
             border: none;
+            font-weight: 600;
+            font-size: 1.08rem;
+            padding: 10px 22px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+            transition: background 0.2s, box-shadow 0.2s;
         }
-        .btn-primary:hover {
-            background: #1746a2;
+        .btn-primary:hover, .btn-primary:focus {
+            background: linear-gradient(90deg, #1746a2 60%, #2563eb 100%);
+            box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444 60%, #b91c1c 100%);
+            border: none;
+            font-weight: 600;
+            font-size: 1.08rem;
+            padding: 10px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.10);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-danger:hover, .btn-danger:focus {
+            background: linear-gradient(90deg, #b91c1c 60%, #ef4444 100%);
+            box-shadow: 0 4px 16px rgba(239,68,68,0.18);
+        }
+        .modal-content {
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(37,99,235,0.13);
+            padding: 8px 0 0 0;
+        }
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .modal-title {
+            font-weight: 700;
+            color: #2563eb;
+        }
+        .modal-footer {
+            border-top: none;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #1746a2;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            font-size: 1.08rem;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            box-shadow: none;
+            transition: border 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border: 1.5px solid #2563eb;
+            box-shadow: 0 0 0 2px #2563eb22;
+        }
+        /* Custom scrollbar for tables */
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #dbeafe;
+            border-radius: 8px;
+        }
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f5f6fa;
+        }
+        /* Section divider */
+        .section-divider {
+            border-top: 2px solid #e0e7ff;
+            margin: 32px 0 24px 0;
         }
     </style>
 </head>
@@ -89,7 +179,7 @@
             <!-- Staff Details Section -->
             <div class="tab-pane fade show active" id="staff-section" role="tabpanel">
                 <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staffModal">
+                    <button class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#staffModal">
                         <i class="bi bi-plus-circle"></i> Add New Staff
                     </button>
                 </div>
@@ -100,6 +190,7 @@
                                 <th>Name</th>
                                 <th>Date of Joining</th>
                                 <th>Department</th>
+                                <th>Date of Leaving</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -110,7 +201,7 @@
             <!-- Salary Update Section -->
             <div class="tab-pane fade" id="salary-section" role="tabpanel">
                 <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salaryModal">
+                    <button class="btn btn-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#salaryModal">
                         <i class="bi bi-plus-circle"></i> Add New Salary
                     </button>
                 </div>
@@ -154,12 +245,18 @@
                             <label class="form-label">Department</label>
                             <select class="form-select" id="department" required>
                                 <option value="">Select Department</option>
-                                <option value="IT">IT</option>
-                                <option value="HR">HR</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Operations">Operations</option>
+                                <option value="Housekeeping">Housekeeping</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Gardening">Gardening</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="STP">STP</option>
+                                <option value="Canteen">Canteen</option>
+
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date of Leaving (Optional)</label>
+                            <input type="date" class="form-control" id="leavingDate">
                         </div>
                     </form>
                 </div>
@@ -245,12 +342,13 @@
                     <td>${staff.name}</td>
                     <td>${staff.joiningDate}</td>
                     <td>${staff.department}</td>
+                    <td>${staff.leavingDate || '-'}</td>
                     <td class="table-actions">
-                        <button class="btn btn-sm btn-primary" onclick="editStaff(${index})">
-                            <i class="bi bi-pencil"></i>
+                        <button class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1" onclick="editStaff(${index})">
+                            <i class="bi bi-pencil"></i> Edit
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteStaff(${index})">
-                            <i class="bi bi-trash"></i>
+                        <button class="btn btn-sm btn-danger d-inline-flex align-items-center gap-1" onclick="deleteStaff(${index})">
+                            <i class="bi bi-trash"></i> Delete
                         </button>
                     </td>
                 `;
@@ -272,11 +370,11 @@
                     <td>${getMonthName(salary.month)}</td>
                     <td>₹${salary.amount.toLocaleString()}</td>
                     <td class="table-actions">
-                        <button class="btn btn-sm btn-primary" onclick="editSalary(${index})">
-                            <i class="bi bi-pencil"></i>
+                        <button class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1" onclick="editSalary(${index})">
+                            <i class="bi bi-pencil"></i> Edit
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteSalary(${index})">
-                            <i class="bi bi-trash"></i>
+                        <button class="btn btn-sm btn-danger d-inline-flex align-items-center gap-1" onclick="deleteSalary(${index})">
+                            <i class="bi bi-trash"></i> Delete
                         </button>
                     </td>
                 `;
@@ -295,13 +393,14 @@
             const name = document.getElementById('staffName').value;
             const joiningDate = document.getElementById('joiningDate').value;
             const department = document.getElementById('department').value;
+            const leavingDate = document.getElementById('leavingDate').value;
 
             if (!name || !joiningDate || !department) {
                 alert('Please fill all fields');
                 return;
             }
 
-            staffData.push({ name, joiningDate, department });
+            staffData.push({ name, joiningDate, department, leavingDate });
             loadStaffData();
             
             // Close modal and reset form
@@ -335,6 +434,7 @@
             document.getElementById('staffName').value = staff.name;
             document.getElementById('joiningDate').value = staff.joiningDate;
             document.getElementById('department').value = staff.department;
+            document.getElementById('leavingDate').value = staff.leavingDate || '';
             
             // Show modal
             const modal = new bootstrap.Modal(document.getElementById('staffModal'));
@@ -346,7 +446,8 @@
                 staffData[index] = {
                     name: document.getElementById('staffName').value,
                     joiningDate: document.getElementById('joiningDate').value,
-                    department: document.getElementById('department').value
+                    department: document.getElementById('department').value,
+                    leavingDate: document.getElementById('leavingDate').value
                 };
                 loadStaffData();
                 modal.hide();
