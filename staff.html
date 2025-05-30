@@ -4,14 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Dashboard</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome for sidebar icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous">
     <style>
         body {
-            background: #f7f8fa;
+            background: linear-gradient(135deg, #adb9d3, #a8bcd8);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            background-color: #1e293b;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+        }
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        .sidebar .nav-link {
+            color: #d1d5db;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px 10px;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #334155;
+            color: #ffffff;
+        }
+        .sidebar .nav-link.active {
+            background-color: #334155;
+            color: #ffffff;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
         }
         .dashboard-header {
-            background: #2563eb;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
             color: #fff;
             border-radius: 18px;
             margin: 40px auto 24px auto;
@@ -20,12 +64,12 @@
             font-size: 2.5rem;
             font-weight: bold;
             max-width: 90vw;
-            box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         .tab-card {
             background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             padding: 32px 24px 24px 24px;
             margin: 0 auto 32px auto;
             max-width: 90vw;
@@ -33,29 +77,34 @@
         .nav-tabs {
             border: none;
             margin-bottom: 24px;
+            justify-content: center;
         }
         .nav-tabs .nav-link {
             border: none;
-            border-radius: 10px 10px 0 0;
-            color: #2563eb;
+            border-radius: 10px;
+            color: #3b82f6;
             font-weight: 500;
-            background: #eaf1ff;
+            background: #f3f4f6;
             margin-right: 8px;
             padding: 12px 32px;
-            transition: background 0.2s, color 0.2s;
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link:hover {
+            background: #e0f2fe;
+            color: #1d4ed8;
         }
         .nav-tabs .nav-link.active {
-            background: #dbeafe;
-            color: #2563eb;
-            border-bottom: 2px solid #2563eb;
+            background: #e0f2fe;
+            color: #1d4ed8;
+            border-bottom: 2px solid #1d4ed8;
         }
         .table {
             border-radius: 16px;
             overflow: hidden;
         }
         .table thead th {
-            background: #f5f6fa;
-            color: #222;
+            background: #f3f4f6;
+            color: #1e293b;
             font-weight: 600;
             border: none;
         }
@@ -66,68 +115,171 @@
             white-space: nowrap;
         }
         .btn-primary {
-            background: #2563eb;
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
             border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         .btn-primary:hover {
-            background: #1746a2;
+            background: linear-gradient(45deg, #1d4ed8, #3b82f6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .modal-content {
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .modal-header {
+            background: #f3f4f6;
+            border-bottom: none;
+            border-radius: 15px 15px 0 0;
+        }
+        .modal-title {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .modal-footer {
+            border-top: none;
+            background: #f3f4f6;
+            border-radius: 0 0 15px 15px;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            padding: 10px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .form-check-input:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .dashboard-header {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="dashboard-header">Staff Dashboard</div>
-    <div class="tab-card">
-        <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff-section" type="button" role="tab">Staff Details</button>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Admin Panel</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="navigateTo('index.html')"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary-section" type="button" role="tab">Salary Update</button>
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="navigateTo('staff.html')"><i class="fas fa-users"></i> Staff</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="contract.html" onclick="navigateTo('contract.html')"><i class="fas fa-file-contract"></i> Contract</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="amc.html" onclick="navigateTo('amc.html')"><i class="fas fa-file-contract"></i> AMC</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="vehicle.html" onclick="navigateTo('vehicle.html')"><i class="fas fa-file-contract"></i> Vehicle</a>
             </li>
         </ul>
-        <div class="tab-content mt-3">
-            <!-- Staff Details Section -->
-            <div class="tab-pane fade show active" id="staff-section" role="tabpanel">
-                <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staffModal">
-                        <i class="bi bi-plus-circle"></i> Add New Staff
-                    </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">Staff Dashboard</div>
+        <div class="tab-card">
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff-section" type="button" role="tab">Staff Details</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="salary-tab" data-bs-toggle="tab" data-bs-target="#salary-section" type="button" role="tab">Salary Update</button>
+                </li>
+            </ul>
+            <div class="tab-content mt-3">
+                <!-- Staff Details Section -->
+                <div class="tab-pane fade show active" id="staff-section" role="tabpanel">
+                    <div class="d-flex justify-content-end mb-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staffModal">
+                            <i class="bi bi-plus-circle"></i> Add New Staff
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" id="staffTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date of Joining</th>
+                                    <th>Date of Leaving</th>
+                                    <th>Department</th>
+                                    <th>Working</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table" id="staffTable">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Date of Joining</th>
-                                <th>Date of Leaving</th>
-                                <th>Department</th>                              
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- Salary Update Section -->
-            <div class="tab-pane fade" id="salary-section" role="tabpanel">
-                <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salaryModal">
-                        <i class="bi bi-plus-circle"></i> Add New Salary
-                    </button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table" id="salaryTable">
-                        <thead>
-                            <tr>
-                                <th>Staff Name</th>
-                                <th>Year</th>
-                                <th>Month</th>
-                                <th>Amount</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <!-- Salary Update Section -->
+                <div class="tab-pane fade" id="salary-section" role="tabpanel">
+                    <div class="d-flex justify-content-end mb-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#salaryModal">
+                            <i class="bi bi-plus-circle"></i> Add New Salary
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" id="salaryTable">
+                            <thead>
+                                <tr>
+                                    <th>Staff Name</th>
+                                    <th>Year</th>
+                                    <th>Month</th>
+                                    <th>Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,13 +315,13 @@
                             <label class="form-label">Department</label>
                             <select class="form-select" id="department" required>
                                 <option value="">Select Department</option>
-                                <option value="IT">Housekeeping</option>
-                                <option value="HR">Transport</option>
-                                <option value="Finance">Security</option>
-                                <option value="Marketing">Gardening</option>
-                                <option value="Operations">Electrical</option>
-                                <option value="Operations">STP</option>
-                                <option value="Operations">Canteen</option>
+                                <option value="Housekeeping">Housekeeping</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Security">Security</option>
+                                <option value="Gardening">Gardening</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="STP">STP</option>
+                                <option value="Canteen">Canteen</option>
                             </select>
                         </div>
                     </form>
@@ -234,11 +386,17 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script>
         // Store data in memory (replace with actual database in production)
         let staffData = [];
         let salaryData = [];
+
+        // Navigation function for sidebar
+        function navigateTo(page) {
+            window.location.href = page;
+        }
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
